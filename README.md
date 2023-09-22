@@ -2,10 +2,6 @@
 
 LunarisScript is a lua interpretation of the language "Lox" by Robert Nystrom.
 
-If you wish to publish your features to the main branch, please do either of the following:
-	1. Message me (lili2) on discord
-	2. Join the LunarisSDK discord server (https://discord.gg/NVWW9gjJuF), and upload your .rbxmx file to the #LunarisScript/features-fixes forum channel, following the format
-
 # READ BEFORE USING
 
 DO NOT USE THIS IN A PLACE THAT HAS ANY IMPORTANT STUFF
