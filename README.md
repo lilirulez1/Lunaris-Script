@@ -4,9 +4,9 @@ LunarisScript is a lua interpretation of the language "Lox" by Robert Nystrom.
 
 # READ BEFORE USING
 
-DO NOT USE THIS IN A PLACE THAT HAS ANY IMPORTANT STUFF
-ONLY USE THIS PLUGIN IN A NEW, EMPTY PLACE AS IT LIKES TO CRASH
-AND FOR SOME REASON, PLUGINS DONT HAVE SCRIPT TIMEOUTS
+Do not use this in a place that has any important stuff.
+Only use this plugin in a new, empty place, as it likes to crash your studio.
+For some reason, plugins don't have script timeouts.
 
 DO NOT USE FOR LOOPS UNTIL THEY ARE FIXED, THEY WILL CRASH YOUR STUDIO
 
