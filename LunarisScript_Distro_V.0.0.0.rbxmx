@@ -1,0 +1,3725 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Folder" referent="RBX24DE9CED529F42D4A0EBB1E87C3012DD">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<string name="Name">LunarisScript_Distro_V.0.0.0</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<BinaryString name="Tags"></BinaryString>
+		</Properties>
+		<Item class="Script" referent="RBX19D08012F089492CAC33954654A51FE9">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Script</string>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{F0EB7295-BD05-4083-885B-1290A8251854}</string>
+				<ProtectedString name="Source"><![CDATA[local ChangeHistoryService = game:GetService("ChangeHistoryService")
+local PluginService = require(script.PluginService)
+PluginService.init(plugin)
+
+plugin:Activate(false)
+local Mouse = plugin:GetMouse() :: PluginMouse
+local Plugin = PluginService.new("Lunaris Script | 0.0.0")
+local WidgetGui = script.Container
+local ScriptEditorWidget = Plugin:CreateDockWidget(WidgetGui, "Script Editor", Enum.InitialDockState.Right, false, false, 500, 1000, 250, 250)
+
+local ScriptEditorButton = Plugin:CreateButton("Script Editor", "Open the Script Editor", "rbxassetid://6927295847")
+ScriptEditorButton:ClickableWhenViewportHidden(true)
+
+ScriptEditorButton.Click:Connect(function()
+	ScriptEditorWidget.Enabled = not ScriptEditorWidget.Enabled
+end)
+
+---------------------------------------------------------------------------
+
+local LunarisScript = require(script.LunarisScript)
+
+local ExecuteButton = WidgetGui.Container.Execute
+local TextBox = WidgetGui.ScrollingFrame.TextArea.TextBox
+local LineCount = WidgetGui.ScrollingFrame.TextArea.LineCount
+
+ExecuteButton.MouseEnter:Connect(function()
+	ExecuteButton.BackgroundColor3 = Color3.new(0.262745, 0.262745, 0.262745)
+	Mouse.Icon = "rbxasset://SystemCursors/PointingHand"
+end)
+
+ExecuteButton.MouseLeave:Connect(function()
+	ExecuteButton.BackgroundColor3 = Color3.new(0.235294, 0.235294, 0.235294)
+	Mouse.Icon = "rbxasset://SystemCursors/Arrow"
+end)
+
+ExecuteButton.MouseButton1Click:Connect(function()
+	LunarisScript:Run(TextBox.Text)
+end)
+
+------
+
+function UpdateLineCounter(Lines)
+	LineCount.Text = ""
+	
+	for i = 1, Lines do
+		LineCount.Text = LineCount.Text .. i .. "\n"
+	end
+end
+
+local Lines = #TextBox.Text:split("\n")
+UpdateLineCounter(Lines)
+
+TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+	Lines = #TextBox.Text:split("\n")
+	UpdateLineCounter(Lines)
+end)]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="ModuleScript" referent="RBX49F44521C3BF4F22B1A4D48ED9F79DF3">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">PluginService</string>
+					<string name="ScriptGuid">{60717CA3-BE71-4BF3-A639-417F9F80531F}</string>
+					<ProtectedString name="Source"><![CDATA[local Signals = require(script.Signals)
+
+local PluginModule = {}
+local Plugin = {}
+
+local Button = {}
+
+local plugin = nil
+
+function PluginModule.init(Plugin)
+	plugin = Plugin
+end
+
+function PluginModule.new(Name: string)
+	local self = {}
+	
+	self.Plugin = plugin:CreateToolbar(Name)
+	
+	return setmetatable(self :: {}, {__index = Plugin})
+end
+
+function Plugin:CreateButton(Text: string, Prompt: string, Icon: string)
+	local NewButton = self.Plugin:CreateButton(Text, Prompt, Icon)
+	local ClickSignal =  Signals.CreateSignal()
+	
+	local IsEnabled = false
+	
+	NewButton.Click:Connect(function()
+		IsEnabled = not IsEnabled
+		
+		ClickSignal:Fire(IsEnabled)
+	end)
+	
+	return setmetatable({
+		Click = ClickSignal
+	}, {__index = Button, __button = NewButton})
+end
+
+function Plugin:CreateDockWidget(Gui, Name: string, InitialState: Enum.InitialDockState, Enabled: boolean, Override: boolean, X, Y, MinX, MinY)
+	local WidgetInfo = DockWidgetPluginGuiInfo.new(
+		InitialState,
+		Enabled,
+		Override,
+		X,
+		Y,
+		MinX,
+		MinY
+	)
+	
+	local Widget = plugin:CreateDockWidgetPluginGui(Name, WidgetInfo)
+	Widget.Title = Name
+	Gui.Parent = Widget
+	
+	return Widget :: StudioWidget
+end
+
+function Button:ClickableWhenViewportHidden(Visible: boolean)
+	getmetatable(self).__button.ClickableWhenViewportHidden = Visible
+end
+
+return PluginModule]]></ProtectedString>
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBXA484507139A840DAB028DF385326B499">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Signals</string>
+						<string name="ScriptGuid">{B5527DB7-EAA1-4D56-876C-E6671B033CC9}</string>
+						<ProtectedString name="Source"><![CDATA[type self = {}
+
+local module = {}
+
+local Signals = {}
+local Connections = {}
+
+function module.CreateSignal()
+	local Signal = setmetatable({} :: self, {__index = Signals})
+	Signal.Connections = {}
+	
+	return Signal
+end
+
+function Signals:Fire(...)
+	for _, Connection in self.Connections do
+		Connection.Callback(...)
+		
+		if Connection.Once then
+			Connections:Disconnect()
+		end
+	end
+end
+
+function Signals:Connect(Callback: () -> ())
+	local Connection = setmetatable({} :: self, {__index = Connections, __connections = self.Connections})
+	Connection.Callback = Callback
+	table.insert(self.Connections, Connection)
+
+	return Connection
+end
+
+function Signals:Once(Callback: () -> ())
+	local Connection = setmetatable({} :: self, {__index = Connections, __connections = self.Connections})
+	Connection.Callback = Callback
+	Connection.Once = true
+	table.insert(self.Connections, Connection)
+
+	return Connection
+end
+
+function Signals:Wait(Callback: () -> ())
+	local Thread, Connection = coroutine.running()
+	
+	Connection = self:Connect(function(...)
+		Connection:Disconnect()
+		Callback(...)
+		
+		coroutine.resume(Thread)
+	end)
+
+	return coroutine.yield()
+end
+
+function Connections:Disconnect()
+	local Metatable = getmetatable(self)
+	
+	for i, Connection in Metatable.__connections do
+		if Connection == self then
+			table.remove(Metatable.__connections, i)
+			break
+		end
+	end
+
+	self.Callback = nil
+end
+
+return module
+]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="Frame" referent="RBXE8B1839D66FF46329DB3C3D0CF7FCAA4">
+				<Properties>
+					<bool name="Active">false</bool>
+					<Vector2 name="AnchorPoint">
+						<X>0</X>
+						<Y>0</Y>
+					</Vector2>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<bool name="AutoLocalize">true</bool>
+					<token name="AutomaticSize">0</token>
+					<Color3 name="BackgroundColor3">
+						<R>0.180392161</R>
+						<G>0.180392161</G>
+						<B>0.180392161</B>
+					</Color3>
+					<float name="BackgroundTransparency">0</float>
+					<Color3 name="BorderColor3">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
+					<token name="BorderMode">0</token>
+					<int name="BorderSizePixel">0</int>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="ClipsDescendants">false</bool>
+					<bool name="DefinesCapabilities">false</bool>
+					<bool name="Draggable">false</bool>
+					<bool name="Interactable">true</bool>
+					<int name="LayoutOrder">0</int>
+					<string name="Name">Container</string>
+					<Ref name="NextSelectionDown">null</Ref>
+					<Ref name="NextSelectionLeft">null</Ref>
+					<Ref name="NextSelectionRight">null</Ref>
+					<Ref name="NextSelectionUp">null</Ref>
+					<UDim2 name="Position">
+						<XS>0</XS>
+						<XO>0</XO>
+						<YS>0</YS>
+						<YO>0</YO>
+					</UDim2>
+					<Ref name="RootLocalizationTable">null</Ref>
+					<float name="Rotation">0</float>
+					<bool name="Selectable">false</bool>
+					<token name="SelectionBehaviorDown">0</token>
+					<token name="SelectionBehaviorLeft">0</token>
+					<token name="SelectionBehaviorRight">0</token>
+					<token name="SelectionBehaviorUp">0</token>
+					<bool name="SelectionGroup">false</bool>
+					<Ref name="SelectionImageObject">null</Ref>
+					<int name="SelectionOrder">0</int>
+					<UDim2 name="Size">
+						<XS>1</XS>
+						<XO>0</XO>
+						<YS>1</YS>
+						<YO>0</YO>
+					</UDim2>
+					<token name="SizeConstraint">0</token>
+					<int64 name="SourceAssetId">-1</int64>
+					<token name="Style">0</token>
+					<BinaryString name="Tags"></BinaryString>
+					<bool name="Visible">true</bool>
+					<int name="ZIndex">1</int>
+				</Properties>
+				<Item class="Frame" referent="RBX29181669F72A4E00A5A5B3EFA6A0EC61">
+					<Properties>
+						<bool name="Active">false</bool>
+						<Vector2 name="AnchorPoint">
+							<X>0</X>
+							<Y>1</Y>
+						</Vector2>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<bool name="AutoLocalize">true</bool>
+						<token name="AutomaticSize">0</token>
+						<Color3 name="BackgroundColor3">
+							<R>0.180392161</R>
+							<G>0.180392161</G>
+							<B>0.180392161</B>
+						</Color3>
+						<float name="BackgroundTransparency">1</float>
+						<Color3 name="BorderColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<token name="BorderMode">0</token>
+						<int name="BorderSizePixel">0</int>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="ClipsDescendants">false</bool>
+						<bool name="DefinesCapabilities">false</bool>
+						<bool name="Draggable">false</bool>
+						<bool name="Interactable">true</bool>
+						<int name="LayoutOrder">0</int>
+						<string name="Name">Container</string>
+						<Ref name="NextSelectionDown">null</Ref>
+						<Ref name="NextSelectionLeft">null</Ref>
+						<Ref name="NextSelectionRight">null</Ref>
+						<Ref name="NextSelectionUp">null</Ref>
+						<UDim2 name="Position">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>1</YS>
+							<YO>0</YO>
+						</UDim2>
+						<Ref name="RootLocalizationTable">null</Ref>
+						<float name="Rotation">0</float>
+						<bool name="Selectable">false</bool>
+						<token name="SelectionBehaviorDown">0</token>
+						<token name="SelectionBehaviorLeft">0</token>
+						<token name="SelectionBehaviorRight">0</token>
+						<token name="SelectionBehaviorUp">0</token>
+						<bool name="SelectionGroup">false</bool>
+						<Ref name="SelectionImageObject">null</Ref>
+						<int name="SelectionOrder">0</int>
+						<UDim2 name="Size">
+							<XS>1</XS>
+							<XO>0</XO>
+							<YS>0</YS>
+							<YO>35</YO>
+						</UDim2>
+						<token name="SizeConstraint">0</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<token name="Style">0</token>
+						<BinaryString name="Tags"></BinaryString>
+						<bool name="Visible">true</bool>
+						<int name="ZIndex">1</int>
+					</Properties>
+					<Item class="TextButton" referent="RBXC9827E0A5CC0418A93FD832E4E8227D8">
+						<Properties>
+							<bool name="Active">true</bool>
+							<Vector2 name="AnchorPoint">
+								<X>1</X>
+								<Y>0.5</Y>
+							</Vector2>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<bool name="AutoButtonColor">false</bool>
+							<bool name="AutoLocalize">true</bool>
+							<token name="AutomaticSize">0</token>
+							<Color3 name="BackgroundColor3">
+								<R>0.235294119</R>
+								<G>0.235294119</G>
+								<B>0.235294119</B>
+							</Color3>
+							<float name="BackgroundTransparency">0</float>
+							<Color3 name="BorderColor3">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
+							<token name="BorderMode">0</token>
+							<int name="BorderSizePixel">0</int>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="ClipsDescendants">false</bool>
+							<bool name="DefinesCapabilities">false</bool>
+							<bool name="Draggable">false</bool>
+							<Font name="FontFace">
+								<Family><url>rbxasset://fonts/families/SourceSansPro.json</url></Family>
+								<Weight>400</Weight>
+								<Style>Normal</Style>
+							</Font>
+							<bool name="Interactable">true</bool>
+							<int name="LayoutOrder">0</int>
+							<float name="LineHeight">1</float>
+							<int name="MaxVisibleGraphemes">-1</int>
+							<bool name="Modal">false</bool>
+							<string name="Name">Execute</string>
+							<Ref name="NextSelectionDown">null</Ref>
+							<Ref name="NextSelectionLeft">null</Ref>
+							<Ref name="NextSelectionRight">null</Ref>
+							<Ref name="NextSelectionUp">null</Ref>
+							<UDim2 name="Position">
+								<XS>1</XS>
+								<XO>0</XO>
+								<YS>0.5</YS>
+								<YO>0</YO>
+							</UDim2>
+							<bool name="RichText">false</bool>
+							<Ref name="RootLocalizationTable">null</Ref>
+							<float name="Rotation">0</float>
+							<bool name="Selectable">false</bool>
+							<bool name="Selected">false</bool>
+							<token name="SelectionBehaviorDown">0</token>
+							<token name="SelectionBehaviorLeft">0</token>
+							<token name="SelectionBehaviorRight">0</token>
+							<token name="SelectionBehaviorUp">0</token>
+							<bool name="SelectionGroup">false</bool>
+							<Ref name="SelectionImageObject">null</Ref>
+							<int name="SelectionOrder">0</int>
+							<UDim2 name="Size">
+								<XS>0</XS>
+								<XO>100</XO>
+								<YS>1</YS>
+								<YO>0</YO>
+							</UDim2>
+							<token name="SizeConstraint">0</token>
+							<int64 name="SourceAssetId">-1</int64>
+							<token name="Style">0</token>
+							<BinaryString name="Tags"></BinaryString>
+							<string name="Text">Execute</string>
+							<Color3 name="TextColor3">
+								<R>0.800000012</R>
+								<G>0.800000012</G>
+								<B>0.800000012</B>
+							</Color3>
+							<token name="TextDirection">0</token>
+							<bool name="TextScaled">false</bool>
+							<float name="TextSize">16</float>
+							<Color3 name="TextStrokeColor3">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
+							<float name="TextStrokeTransparency">1</float>
+							<float name="TextTransparency">0</float>
+							<token name="TextTruncate">0</token>
+							<bool name="TextWrapped">true</bool>
+							<token name="TextXAlignment">2</token>
+							<token name="TextYAlignment">1</token>
+							<bool name="Visible">true</bool>
+							<int name="ZIndex">1</int>
+						</Properties>
+						<Item class="UIAspectRatioConstraint" referent="RBX43A19D73367E46CE954C570C04A267AF">
+							<Properties>
+								<float name="AspectRatio">4</float>
+								<token name="AspectType">0</token>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<token name="DominantAxis">1</token>
+								<string name="Name">UIAspectRatioConstraint</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
+						<Item class="UIStroke" referent="RBX1C9C0E30A49141E989B0E550B7DED397">
+							<Properties>
+								<token name="ApplyStrokeMode">1</token>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<Color3 name="Color">
+									<R>0.101960793</R>
+									<G>0.101960793</G>
+									<B>0.101960793</B>
+								</Color3>
+								<bool name="DefinesCapabilities">false</bool>
+								<bool name="Enabled">true</bool>
+								<token name="LineJoinMode">0</token>
+								<string name="Name">UIStroke</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<float name="Thickness">1</float>
+								<float name="Transparency">0</float>
+							</Properties>
+						</Item>
+					</Item>
+					<Item class="UIPadding" referent="RBX33C651CDCEA942D0B988176EBEC02F94">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<string name="Name">UIPadding</string>
+							<UDim name="PaddingBottom">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<UDim name="PaddingLeft">
+								<S>0</S>
+								<O>2</O>
+							</UDim>
+							<UDim name="PaddingRight">
+								<S>0</S>
+								<O>7</O>
+							</UDim>
+							<UDim name="PaddingTop">
+								<S>0</S>
+								<O>0</O>
+							</UDim>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="ScrollingFrame" referent="RBX7E8C10D71FCA4927ADC839714AACF15C">
+					<Properties>
+						<bool name="Active">true</bool>
+						<Vector2 name="AnchorPoint">
+							<X>0</X>
+							<Y>0</Y>
+						</Vector2>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<bool name="AutoLocalize">true</bool>
+						<token name="AutomaticCanvasSize">3</token>
+						<token name="AutomaticSize">0</token>
+						<Color3 name="BackgroundColor3">
+							<R>0.160784319</R>
+							<G>0.160784319</G>
+							<B>0.160784319</B>
+						</Color3>
+						<float name="BackgroundTransparency">0</float>
+						<Color3 name="BorderColor3">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
+						<token name="BorderMode">0</token>
+						<int name="BorderSizePixel">0</int>
+						<Content name="BottomImage"><null></null></Content>
+						<Vector2 name="CanvasPosition">
+							<X>0</X>
+							<Y>0</Y>
+						</Vector2>
+						<UDim2 name="CanvasSize">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>0</YS>
+							<YO>0</YO>
+						</UDim2>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="ClipsDescendants">true</bool>
+						<bool name="DefinesCapabilities">false</bool>
+						<bool name="Draggable">false</bool>
+						<token name="ElasticBehavior">2</token>
+						<token name="HorizontalScrollBarInset">0</token>
+						<bool name="Interactable">true</bool>
+						<int name="LayoutOrder">0</int>
+						<Content name="MidImage"><url>rbxasset://textures/ui/Scroll/scroll-middle.png</url></Content>
+						<string name="Name">ScrollingFrame</string>
+						<Ref name="NextSelectionDown">null</Ref>
+						<Ref name="NextSelectionLeft">null</Ref>
+						<Ref name="NextSelectionRight">null</Ref>
+						<Ref name="NextSelectionUp">null</Ref>
+						<UDim2 name="Position">
+							<XS>0</XS>
+							<XO>0</XO>
+							<YS>0</YS>
+							<YO>0</YO>
+						</UDim2>
+						<Ref name="RootLocalizationTable">null</Ref>
+						<float name="Rotation">0</float>
+						<Color3 name="ScrollBarImageColor3">
+							<R>0.21960786</R>
+							<G>0.21960786</G>
+							<B>0.21960786</B>
+						</Color3>
+						<float name="ScrollBarImageTransparency">0</float>
+						<int name="ScrollBarThickness">13</int>
+						<token name="ScrollingDirection">4</token>
+						<bool name="ScrollingEnabled">true</bool>
+						<bool name="Selectable">true</bool>
+						<token name="SelectionBehaviorDown">0</token>
+						<token name="SelectionBehaviorLeft">0</token>
+						<token name="SelectionBehaviorRight">0</token>
+						<token name="SelectionBehaviorUp">0</token>
+						<bool name="SelectionGroup">true</bool>
+						<Ref name="SelectionImageObject">null</Ref>
+						<int name="SelectionOrder">0</int>
+						<UDim2 name="Size">
+							<XS>1</XS>
+							<XO>0</XO>
+							<YS>1</YS>
+							<YO>-35</YO>
+						</UDim2>
+						<token name="SizeConstraint">0</token>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+						<Content name="TopImage"><null></null></Content>
+						<token name="VerticalScrollBarInset">0</token>
+						<token name="VerticalScrollBarPosition">0</token>
+						<bool name="Visible">true</bool>
+						<int name="ZIndex">1</int>
+					</Properties>
+					<Item class="Frame" referent="RBXDE8E4C7B8E8648C4A1472A6BD73C7A0F">
+						<Properties>
+							<bool name="Active">false</bool>
+							<Vector2 name="AnchorPoint">
+								<X>0</X>
+								<Y>0</Y>
+							</Vector2>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<bool name="AutoLocalize">true</bool>
+							<token name="AutomaticSize">2</token>
+							<Color3 name="BackgroundColor3">
+								<R>0.180392161</R>
+								<G>0.180392161</G>
+								<B>0.180392161</B>
+							</Color3>
+							<float name="BackgroundTransparency">0</float>
+							<Color3 name="BorderColor3">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
+							<token name="BorderMode">0</token>
+							<int name="BorderSizePixel">0</int>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="ClipsDescendants">false</bool>
+							<bool name="DefinesCapabilities">false</bool>
+							<bool name="Draggable">false</bool>
+							<bool name="Interactable">true</bool>
+							<int name="LayoutOrder">0</int>
+							<string name="Name">TextArea</string>
+							<Ref name="NextSelectionDown">null</Ref>
+							<Ref name="NextSelectionLeft">null</Ref>
+							<Ref name="NextSelectionRight">null</Ref>
+							<Ref name="NextSelectionUp">null</Ref>
+							<UDim2 name="Position">
+								<XS>0</XS>
+								<XO>0</XO>
+								<YS>0</YS>
+								<YO>0</YO>
+							</UDim2>
+							<Ref name="RootLocalizationTable">null</Ref>
+							<float name="Rotation">0</float>
+							<bool name="Selectable">false</bool>
+							<token name="SelectionBehaviorDown">0</token>
+							<token name="SelectionBehaviorLeft">0</token>
+							<token name="SelectionBehaviorRight">0</token>
+							<token name="SelectionBehaviorUp">0</token>
+							<bool name="SelectionGroup">false</bool>
+							<Ref name="SelectionImageObject">null</Ref>
+							<int name="SelectionOrder">0</int>
+							<UDim2 name="Size">
+								<XS>1</XS>
+								<XO>0</XO>
+								<YS>1</YS>
+								<YO>0</YO>
+							</UDim2>
+							<token name="SizeConstraint">0</token>
+							<int64 name="SourceAssetId">-1</int64>
+							<token name="Style">0</token>
+							<BinaryString name="Tags"></BinaryString>
+							<bool name="Visible">true</bool>
+							<int name="ZIndex">1</int>
+						</Properties>
+						<Item class="UIStroke" referent="RBXA5E2E289DB4D4A6CA40C378BC355CB04">
+							<Properties>
+								<token name="ApplyStrokeMode">0</token>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<Color3 name="Color">
+									<R>0.13333334</R>
+									<G>0.13333334</G>
+									<B>0.13333334</B>
+								</Color3>
+								<bool name="DefinesCapabilities">false</bool>
+								<bool name="Enabled">true</bool>
+								<token name="LineJoinMode">0</token>
+								<string name="Name">UIStroke</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<float name="Thickness">1</float>
+								<float name="Transparency">0</float>
+							</Properties>
+						</Item>
+						<Item class="TextBox" referent="RBX3B498389004E42E487AA0E252723CC5A">
+							<Properties>
+								<bool name="Active">true</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">3</token>
+								<Color3 name="BackgroundColor3">
+									<R>0.145098045</R>
+									<G>0.145098045</G>
+									<B>0.145098045</B>
+								</Color3>
+								<float name="BackgroundTransparency">0</float>
+								<Color3 name="BorderColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">0</int>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="ClearTextOnFocus">false</bool>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="DefinesCapabilities">false</bool>
+								<bool name="Draggable">false</bool>
+								<Font name="FontFace">
+									<Family><url>rbxasset://fonts/families/RobotoMono.json</url></Family>
+									<Weight>400</Weight>
+									<Style>Normal</Style>
+								</Font>
+								<bool name="Interactable">true</bool>
+								<int name="LayoutOrder">0</int>
+								<float name="LineHeight">1</float>
+								<int name="MaxVisibleGraphemes">-1</int>
+								<bool name="MultiLine">true</bool>
+								<string name="Name">TextBox</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<Color3 name="PlaceholderColor3">
+									<R>0.699999988</R>
+									<G>0.699999988</G>
+									<B>0.699999988</B>
+								</Color3>
+								<string name="PlaceholderText"></string>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>55</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<bool name="RichText">false</bool>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">true</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<bool name="ShowNativeInput">true</bool>
+								<UDim2 name="Size">
+									<XS>1</XS>
+									<XO>-100</XO>
+									<YS>1</YS>
+									<YO>0</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<string name="Text"><![CDATA[class Person {
+	init(Name, Age) {
+		this.Name = Name;
+		this.Age = Age;
+		this.Money = 0;
+	}
+	
+	Print() {
+		print("\nName: " + this.Name + "\nAge: " + this.Age + "\nMoney: " + this.Money);
+	}
+}
+
+class Worker < Person {
+	Work(Hours) {
+		this.Money = this.Money + (Hours * 15);
+	}
+}
+
+var MaccasWorker = Worker("Jamarcus", 22);
+
+MaccasWorker.Print();
+
+MaccasWorker.Work(8);
+
+MaccasWorker.Print();]]></string>
+								<Color3 name="TextColor3">
+									<R>0.800000012</R>
+									<G>0.800000012</G>
+									<B>0.800000012</B>
+								</Color3>
+								<token name="TextDirection">1</token>
+								<bool name="TextEditable">true</bool>
+								<bool name="TextScaled">false</bool>
+								<float name="TextSize">20</float>
+								<Color3 name="TextStrokeColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<float name="TextStrokeTransparency">1</float>
+								<float name="TextTransparency">0</float>
+								<token name="TextTruncate">0</token>
+								<bool name="TextWrapped">false</bool>
+								<token name="TextXAlignment">0</token>
+								<token name="TextYAlignment">0</token>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+							<Item class="UIPadding" referent="RBX1BEB7C0C14FE442CA9CD1AB0A70110DB">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<string name="Name">UIPadding</string>
+									<UDim name="PaddingBottom">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<UDim name="PaddingLeft">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<UDim name="PaddingRight">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<UDim name="PaddingTop">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="TextBox" referent="RBX50DA9EF8F91F4E76BBDF5A2F20D321A5">
+							<Properties>
+								<bool name="Active">true</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">3</token>
+								<Color3 name="BackgroundColor3">
+									<R>0.172549024</R>
+									<G>0.172549024</G>
+									<B>0.172549024</B>
+								</Color3>
+								<float name="BackgroundTransparency">0</float>
+								<Color3 name="BorderColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">0</int>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="ClearTextOnFocus">false</bool>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="DefinesCapabilities">false</bool>
+								<bool name="Draggable">false</bool>
+								<Font name="FontFace">
+									<Family><url>rbxasset://fonts/families/RobotoMono.json</url></Family>
+									<Weight>400</Weight>
+									<Style>Normal</Style>
+								</Font>
+								<bool name="Interactable">true</bool>
+								<int name="LayoutOrder">0</int>
+								<float name="LineHeight">1</float>
+								<int name="MaxVisibleGraphemes">-1</int>
+								<bool name="MultiLine">true</bool>
+								<string name="Name">LineCount</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<Color3 name="PlaceholderColor3">
+									<R>0.699999988</R>
+									<G>0.699999988</G>
+									<B>0.699999988</B>
+								</Color3>
+								<string name="PlaceholderText"></string>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>0</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<bool name="RichText">false</bool>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<bool name="ShowNativeInput">true</bool>
+								<UDim2 name="Size">
+									<XS>0</XS>
+									<XO>40</XO>
+									<YS>1</YS>
+									<YO>0</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<BinaryString name="Tags"></BinaryString>
+								<string name="Text"></string>
+								<Color3 name="TextColor3">
+									<R>0.800000012</R>
+									<G>0.800000012</G>
+									<B>0.800000012</B>
+								</Color3>
+								<token name="TextDirection">1</token>
+								<bool name="TextEditable">false</bool>
+								<bool name="TextScaled">false</bool>
+								<float name="TextSize">20</float>
+								<Color3 name="TextStrokeColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<float name="TextStrokeTransparency">1</float>
+								<float name="TextTransparency">0</float>
+								<token name="TextTruncate">0</token>
+								<bool name="TextWrapped">false</bool>
+								<token name="TextXAlignment">1</token>
+								<token name="TextYAlignment">0</token>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+							<Item class="UIPadding" referent="RBX781737E897E542D1BA1F16C8EA2A0CBF">
+								<Properties>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<string name="Name">UIPadding</string>
+									<UDim name="PaddingBottom">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<UDim name="PaddingLeft">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<UDim name="PaddingRight">
+										<S>0</S>
+										<O>15</O>
+									</UDim>
+									<UDim name="PaddingTop">
+										<S>0</S>
+										<O>10</O>
+									</UDim>
+									<int64 name="SourceAssetId">-1</int64>
+									<BinaryString name="Tags"></BinaryString>
+								</Properties>
+							</Item>
+						</Item>
+						<Item class="Frame" referent="RBX702AF702336E4BA7A6DF593E6840FCCE">
+							<Properties>
+								<bool name="Active">false</bool>
+								<Vector2 name="AnchorPoint">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<bool name="AutoLocalize">true</bool>
+								<token name="AutomaticSize">0</token>
+								<Color3 name="BackgroundColor3">
+									<R>0.188235313</R>
+									<G>0.188235313</G>
+									<B>0.188235313</B>
+								</Color3>
+								<float name="BackgroundTransparency">0</float>
+								<Color3 name="BorderColor3">
+									<R>0</R>
+									<G>0</G>
+									<B>0</B>
+								</Color3>
+								<token name="BorderMode">0</token>
+								<int name="BorderSizePixel">0</int>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="ClipsDescendants">false</bool>
+								<bool name="DefinesCapabilities">false</bool>
+								<bool name="Draggable">false</bool>
+								<bool name="Interactable">true</bool>
+								<int name="LayoutOrder">0</int>
+								<string name="Name">Divider</string>
+								<Ref name="NextSelectionDown">null</Ref>
+								<Ref name="NextSelectionLeft">null</Ref>
+								<Ref name="NextSelectionRight">null</Ref>
+								<Ref name="NextSelectionUp">null</Ref>
+								<UDim2 name="Position">
+									<XS>0</XS>
+									<XO>40</XO>
+									<YS>0</YS>
+									<YO>0</YO>
+								</UDim2>
+								<Ref name="RootLocalizationTable">null</Ref>
+								<float name="Rotation">0</float>
+								<bool name="Selectable">false</bool>
+								<token name="SelectionBehaviorDown">0</token>
+								<token name="SelectionBehaviorLeft">0</token>
+								<token name="SelectionBehaviorRight">0</token>
+								<token name="SelectionBehaviorUp">0</token>
+								<bool name="SelectionGroup">false</bool>
+								<Ref name="SelectionImageObject">null</Ref>
+								<int name="SelectionOrder">0</int>
+								<UDim2 name="Size">
+									<XS>0</XS>
+									<XO>15</XO>
+									<YS>1</YS>
+									<YO>0</YO>
+								</UDim2>
+								<token name="SizeConstraint">0</token>
+								<int64 name="SourceAssetId">-1</int64>
+								<token name="Style">0</token>
+								<BinaryString name="Tags"></BinaryString>
+								<bool name="Visible">true</bool>
+								<int name="ZIndex">1</int>
+							</Properties>
+						</Item>
+					</Item>
+				</Item>
+			</Item>
+			<Item class="ModuleScript" referent="RBX88E1DB10EDB74E1CA77B936A763678A3">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">LunarisScript</string>
+					<string name="ScriptGuid">{C874E1F9-FDD0-427E-AE2F-4597C82550C9}</string>
+					<ProtectedString name="Source"><![CDATA[local ScannerClass = require(script.Scanner)
+local ParserClass = require(script.Parser)
+local InterpreterClass = require(script.Interpreter)
+local ResolverClass = require(script.Resolver)
+
+local Interpreter = InterpreterClass:new()
+
+local LunarisScript = {}
+
+function LunarisScript:Run(SourceCode: string)
+	local Scanner = ScannerClass.new(SourceCode)
+	local Tokens, Error = Scanner:ScanTokens(false)
+	
+	if Error then
+		print("This aint working rn, but you done f****d up.")
+		return
+	end
+	
+	local Parser = ParserClass.new(Tokens)
+	local Statements, Error = Parser:Parse()
+	
+	if Error then
+		print("\n  " .. Error .. "\n")
+		return
+	end
+	
+	local Resolver = ResolverClass.new(Interpreter)
+	local Error = Resolver:ResolveStatements(Statements)
+	
+	if Error then
+		print("\n  " .. Error .. "\n")
+		return
+	end
+	
+	local Error = Interpreter:Interpret(Statements)
+	
+	if Error then
+		print("\n  " .. Error .. "\n")
+		return
+	end
+end
+
+return LunarisScript]]></ProtectedString>
+					<int64 name="SourceAssetId">14835779163</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX995DC7A1244640F9A13901E63C2D827D">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Scanner</string>
+						<string name="ScriptGuid">{CFEBF8DD-E641-4B78-9BAB-7B56E93DF0F9}</string>
+						<ProtectedString name="Source"><![CDATA[local TokenTypes = require(script.Parent.Enums.TokenTypes)
+local Token = require(script.Tokens)
+local Error = require(script.Parent.Error)
+
+-- << ENUMS -------------------------------------------------------------------------------------------------------------------
+
+local Keywords = {
+	["and"]    = TokenTypes.And,
+	["class"]  = TokenTypes.Class,
+	["else"]   = TokenTypes.Else,
+	["false"]  = TokenTypes.False,
+	["for"]    = TokenTypes.For,
+	["fn"]     = TokenTypes.Fn,
+	["if"]     = TokenTypes.If,
+	["nil"]    = TokenTypes.Nil,
+	["or"]     = TokenTypes.Or,
+	--["print"]  = TokenTypes.Print, -- Uncomment to use print as a keyword | Eg. `print "Hello, World!";` instead of `print("Hello, World");` -*Function found in Interpreter/Builtins*-
+	["return"] = TokenTypes.Return,
+	["super"]  = TokenTypes.Super,
+	["this"]   = TokenTypes.This,
+	["true"]   = TokenTypes.True,
+	["var"]    = TokenTypes.Var,
+	["while"]  = TokenTypes.While,
+}
+
+-- >> ENUMS -------------------------------------------------------------------------------------------------------------------
+
+local module = {}
+local Lexers = {}
+
+function module.new(SourceCode: string)
+	local self = setmetatable({}, {__index = Lexers})
+
+	self.SourceCode = SourceCode
+	self.Characters = self.SourceCode:split("")
+
+	self.Start   = 0
+	self.Current = 0
+	self.Line    = 1
+
+	self.Tokens = {}
+
+	return self
+end
+
+
+-- << HELPERS -----------------------------------------------------------------------------------------------------------------
+
+function Lexers:Advance()
+	self.Current += 1
+	return self.Characters[self.Current]
+end
+
+function Lexers:IsAtEnd()
+	return self.Current >= #self.Characters
+end
+
+function Lexers:AddToken(Type, Literal)
+	local Text = self.SourceCode:sub(self.Start + 1, self.Current)
+	table.insert(self.Tokens, Token.new(Type, Text, Literal, self.Line))
+end
+
+function Lexers:Match(Expected)
+	if self:IsAtEnd() then return false end
+	if self.Characters[self.Current + 1] ~= Expected then return false end
+
+	self.Current += 1
+	return true
+end
+
+function Lexers:Peek()
+	if self:IsAtEnd() then return "\0" end
+
+	return self.Characters[self.Current + 1]
+end
+
+function Lexers:PeekNext()
+	if self.Current + 2 >= #self.Characters then return "\0" end
+	return self.Characters[self.Current + 2]
+end
+
+function Lexers:IsDigit(Character)
+	return Character >= "0" and Character <= "9"
+end
+
+-- >> HELPERS -----------------------------------------------------------------------------------------------------------------
+
+-- << METHODS -----------------------------------------------------------------------------------------------------------------
+
+function Lexers:String()
+	while self:Peek() ~= '"' and not self:IsAtEnd() do
+		if self:Peek() == "\n" then self.Line += 1 end
+		self:Advance()
+	end
+
+	if self:IsAtEnd() then
+		Error.ErrorToken(self.Line, "Unterminated string.")
+		return
+	end
+
+	self:Advance()
+
+	local Value = self.SourceCode:sub(self.Start + 2, self.Current - 1)
+	self:AddToken(TokenTypes.String, Value)
+end
+
+function Lexers:Number()
+	while self:IsDigit(self:Peek()) do self:Advance() end
+
+	if self:Peek() == "." and self:IsDigit(self:PeekNext()) then
+		self:Advance()
+
+		while self:IsDigit(self:Peek()) do self:Advance() end
+	end
+
+	self:AddToken(TokenTypes.Number, tonumber(self.SourceCode:sub(self.Start + 1, self.Current)))
+end
+
+function Lexers:IsAlpha(Character)
+	return Character:match("[A-Za-z]") or Character == "_"
+end
+
+function Lexers:IsAlphaNumeric(Character)
+	return self:IsAlpha(Character) or self:IsDigit(Character)
+end
+
+function Lexers:Identifier()
+	while self:IsAlphaNumeric(self:Peek()) do self:Advance() end
+
+	local Text = self.SourceCode:sub(self.Start + 1, self.Current)
+	local Type = Keywords[Text]
+
+	if Type == nil then
+		Type = TokenTypes.Identifier
+	end
+
+	self:AddToken(Type, nil)
+end
+
+-- >> METHODS -----------------------------------------------------------------------------------------------------------------
+
+-- << MAIN >> --
+function Lexers:ScanTokens(IncludeSpaces: boolean)
+	local Success, Result = pcall(function()
+		while not self:IsAtEnd() do
+			self.Start = self.Current
+			local Character = self:Advance()
+
+			if Character == "(" then self:AddToken(TokenTypes.LeftParen)  continue end
+			if Character == ")" then self:AddToken(TokenTypes.RightParen) continue end
+			if Character == "{" then self:AddToken(TokenTypes.LeftBrace)  continue end
+			if Character == "}" then self:AddToken(TokenTypes.RightBrace) continue end
+			if Character == "," then self:AddToken(TokenTypes.Comma)      continue end
+			if Character == "." then self:AddToken(TokenTypes.Dot)        continue end
+			if Character == "+" then self:AddToken(TokenTypes.Plus)       continue end
+			if Character == ";" then self:AddToken(TokenTypes.SemiColon)  continue end
+			if Character == "*" then self:AddToken(TokenTypes.Star)       continue end
+			if Character == "/" then self:AddToken(TokenTypes.Slash)      continue end
+
+			if Character == "!" then
+				self:AddToken((self:Match("=")) and TokenTypes.BangEqual or TokenTypes.Bang)
+				continue
+			end
+
+			if Character == "=" then
+				self:AddToken((self:Match("=")) and TokenTypes.EqualEqual or TokenTypes.Equal)
+				continue
+			end
+
+			if Character == "<" then
+				self:AddToken(self:Match("=") and TokenTypes.LessEqual or TokenTypes.Less)
+				continue
+			end
+
+			if Character == ">" then
+				self:AddToken(self:Match("=") and TokenTypes.GreaterEqual or TokenTypes.Greater)
+				continue
+			end
+
+			if Character == "-" then
+				if self:Match("-") then
+					while self:Peek() ~= "\n" and not self:IsAtEnd() do self:Advance() end
+				else
+					self:AddToken(TokenTypes.Minus)
+				end
+
+				continue
+			end
+
+			if Character == " " or Character == "\r" or Character == "\t" then
+				if not IncludeSpaces then
+					continue
+				end
+
+				if Character == " " then
+					self:AddToken(TokenTypes.Space)
+				elseif Character == "\t" then
+					self:AddToken(TokenTypes.Tab)
+				end
+
+				continue
+			end
+
+			if Character == "\n" then
+				self.Line += 1
+				continue
+			end
+
+			if Character == '"' then
+				self:String()
+				continue
+			end
+
+			if self:IsDigit(Character) then
+				self:Number()
+			elseif self:IsAlpha(Character) then
+				self:Identifier()
+			else
+				Error.ErrorToken(self.Line, "Unexpected character.")
+			end
+
+			continue
+		end
+
+		table.insert(self.Tokens, Token.new(TokenTypes.Eof, "", nil, self.Line))
+	end)
+	
+	if not Success then
+		return nil, true
+	end
+	
+	return self.Tokens
+end
+
+return module]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX6605B96B64C947E78AF27EBA0CA45BC2">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Tokens</string>
+							<string name="ScriptGuid">{18E43DC2-4E69-474E-8C7A-C2D89D0DBA25}</string>
+							<ProtectedString name="Source"><![CDATA[local Tokens = {}
+
+function GetTokenFromType(Type: number)
+	for TokenType, Number in require(script.Parent.Parent.TokenTypes) do
+		if Number == Type then
+			return TokenType
+		end
+	end
+end
+
+function Tokens.new(Type, Lexeme, Literal, Line)
+	local Token = setmetatable({
+		Type = Type,
+		Lexeme = Lexeme,
+		Literal = Literal,
+		Line = Line
+	}, {
+		__index = Tokens,
+		__tostring = function()
+			return GetTokenFromType(Type) .. " '" .. Lexeme .. "' " .. ((Literal == nil) and "" or Literal)
+		end
+	})
+	
+	return Token
+end
+
+return Tokens]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="ModuleScript" referent="RBXED1B8C7D86FD439CB9300BE320EE2C4C">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Error</string>
+						<string name="ScriptGuid">{F2C1550A-9240-4A8C-B11D-13A6E31B4ED1}</string>
+						<ProtectedString name="Source"><![CDATA[local TokenTypes = require(script.Parent.Enums.TokenTypes)
+
+local Error = {}
+
+function Report(Line: number, Where: string, Message: string)
+	error("\n[line " .. Line .. "] Error" .. Where .. ": " .. Message, 1)
+end
+
+function Error.ErrorLine(Line: number, Message: string)
+	Report(Line, "", Message)
+end
+
+function Error.ErrorToken(Token, Message, Traceback)
+	if Token.Type == TokenTypes.Eof then
+		Report(Token.Line, " at end", Message)
+	else
+		Report(Token.Line, " at '" .. Token.Lexeme .. "'", Message)
+	end
+end
+
+return Error]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBXCBD92A0470304B4A87A73537311B1FEE">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Parser</string>
+						<string name="ScriptGuid">{BEFEEACB-5893-423F-AFAF-BDDEC95E8B93}</string>
+						<ProtectedString name="Source"><![CDATA[local Error = require(script.Parent.Error)
+
+local TokenTypes = require(script.Parent.Enums.TokenTypes)
+local ExpressionTypes = require(script.Parent.Enums.ExpressionTypes)
+
+local Expr = require(script.Parent.Classes.Expr)
+local Stmt = require(script.Parent.Classes.Stmt)
+
+local ParserModule = {}
+local Parser = {}
+
+function ParserModule.new(Tokens: {[number]: {Type: number, Lexeme: string, Literal: string? | number?, Line: number}})
+	local self = setmetatable({}, {__index = Parser})
+	
+	self.Tokens = Tokens
+	self.Current = 1
+	self.Statements = {}
+	
+	return self
+end
+
+-- << HELPERS -----------------------------------------------------------------------------------------------------------------
+
+function Parser:Advance()
+	if not self:IsAtEnd() then self.Current += 1 end
+	return self:Previous()
+end
+
+function Parser:IsAtEnd()
+	return self:Peek().Type == TokenTypes.Eof
+end
+
+function Parser:Consume(Type, Message)
+	if self:Check(Type) == true then
+		return self:Advance()
+	end
+	
+	Error.ErrorToken(self:Peek(), Message, "Consume")
+end
+
+function Parser:Peek()
+	return self.Tokens[self.Current]
+end
+
+function Parser:Match(...)
+	for _, Type in {...} do
+		if self:Check(Type) then
+			self:Advance()
+			
+			return true
+		end
+	end
+	
+	return false
+end
+
+function Parser:Check(Type)
+	if self:IsAtEnd() then return false end
+	
+	return self:Peek().Type == Type
+end
+
+function Parser:Previous()
+	return self.Tokens[self.Current - 1]
+end
+
+-- >> HELPERS -----------------------------------------------------------------------------------------------------------------
+
+-- << METHODS -----------------------------------------------------------------------------------------------------------------
+
+-- Yes, I'm aware that having all the methods be like this is not ideal
+-- If you have a better idea, message me (lili2 - Discord)
+
+function Parser:Primary()
+	if self:Match(TokenTypes.False) then return Expr.Literal:new(false) end
+	if self:Match(TokenTypes.True) then return Expr.Literal:new(true) end
+	if self:Match(TokenTypes.Nil) then return Expr.Literal:new(nil) end
+	
+	if self:Match(TokenTypes.Number, TokenTypes.String) then
+		return Expr.Literal:new(self:Previous().Literal)
+	end
+	
+	if self:Match(TokenTypes.Super) then
+		local Keyword = self:Previous()
+		
+		self:Consume(TokenTypes.Dot, "Expected '.' after 'super'.")
+		
+		local Method = self:Consume(TokenTypes.Identifier, "Expected superclass method name.")
+		
+		return Expr.Super:new(Keyword, Method)
+	end
+	
+	if self:Match(TokenTypes.This) then return Expr.This:new(self:Previous()) end
+	
+	if self:Match(TokenTypes.Identifier) then
+		return Expr.Variable:new(self:Previous())
+	end
+	
+	if self:Match(TokenTypes.LeftParen) then
+		local Expression = self:Expression()
+		
+		self:Consume(TokenTypes.RightParen, "Expected ')' after expression.")
+		
+		return Expr.Grouping:new(Expression)
+	end
+	
+	Error.ErrorToken(self:Peek(), "Expected expression.", "Primary")
+end
+
+function Parser:FinishCall(Callee)
+	local Arguments = {}
+	
+	if not self:Check(TokenTypes.RightParen) then
+		repeat
+			table.insert(Arguments, self:Expression())
+		until not self:Match(TokenTypes.Comma)
+	end
+	
+	local Paren = self:Consume(TokenTypes.RightParen, "Expected ')' after arguments.")
+	
+	return Expr.Call:new(Callee, Paren, Arguments)
+end
+
+function Parser:Call()
+	local Expression = self:Primary()
+	
+	while (true) do
+		if self:Match(TokenTypes.LeftParen) then
+			Expression = self:FinishCall(Expression)
+		elseif self:Match(TokenTypes.Dot) then
+			local Name = self:Consume(TokenTypes.Identifier, "Expected property name after '.'.")
+			Expression = Expr.Get:new(Expression, Name)
+		else
+			break
+		end
+	end
+	
+	return Expression
+end
+
+function Parser:Unary()
+	if self:Match(TokenTypes.Bang, TokenTypes.Minus) then
+		local Operator = self:Previous()
+		local Right = self:Unary()
+		
+		return Expr.Unary:new(Operator, Right)
+	end
+	
+	return self:Call()
+end
+
+function Parser:Factor()
+	local Expression = self:Unary()
+
+	while self:Match(TokenTypes.Slash, TokenTypes.Star) do
+		local Operator = self:Previous()
+		local Right = self:Unary()
+
+		Expression = Expr.Binary:new(Expression, Operator, Right)
+	end
+
+	return Expression
+end
+
+function Parser:Term()
+	local Expression = self:Factor()
+
+	while self:Match(TokenTypes.Minus, TokenTypes.Plus) do
+		local Operator = self:Previous()
+		local Right = self:Factor()
+
+		Expression = Expr.Binary:new(Expression, Operator, Right)
+	end
+
+	return Expression
+end
+
+function Parser:Comparison()
+	local Expression = self:Term()
+
+	while self:Match(TokenTypes.Greater, TokenTypes.GreaterEqual, TokenTypes.Less, TokenTypes.LessEqual) do
+		local Operator = self:Previous()
+		local Right = self:Term()
+
+		Expression = Expr.Binary:new(Expression, Operator, Right)
+	end
+
+	return Expression
+end
+
+function Parser:Equality()
+	local Expression = self:Comparison()
+	
+	while self:Match(TokenTypes.BangEqual, TokenTypes.EqualEqual) do
+		local Operator = self:Previous()
+		local Right = self:Comparison()
+		
+		Expression = Expr.Binary:new(Expression, Operator, Right)
+	end
+	
+	return Expression
+end
+
+function Parser:And()
+	local Expression = self:Equality()
+	
+	while self:Match(TokenTypes.And) do
+		local Operator = self:Previous()
+		local Right = self:Equality()
+		
+		Expression = Expr.Logical:new(Expression, Operator, Right)
+	end
+	
+	return Expression
+end
+
+function Parser:Or()
+	local Expression = self:And()
+	
+	while self:Match(TokenTypes.Or) do
+		local Operator = self:Previous()
+		local Right = self:And()
+		
+		Expression = Expr.Logical:new(Expression, Operator, Right)
+	end
+	
+	return Expression
+end
+
+function Parser:Assignment()
+	local Expression = self:Or()
+	
+	if self:Match(TokenTypes.Equal) then
+		local Equals = self:Previous()
+		local Value = self:Assignment()
+		
+		if Expression.Type == ExpressionTypes.Variable then
+			local Name = Expression.Name
+			return Expr.Assign:new(Name, Value)
+		elseif Expression.Type == ExpressionTypes.Get then
+			return Expr.Set:new(Expression.Object, Expression.Name, Value)
+		end
+		
+		Error.ErrorToken(Equals, "Invalid assignment target.", "Assignment")
+	end
+	
+	return Expression
+end
+
+function Parser:Expression()
+	return self:Assignment()
+end
+
+function Parser:Sync()
+	self:Advance()
+	
+	while not self:IsAtEnd() do
+		if self:Previous().Type == TokenTypes.SemiColon then return end
+
+		local PeekType = self:Peek().Type
+		
+		if PeekType == TokenTypes.Class then
+			return
+		elseif PeekType == TokenTypes.Fn then
+			return
+		elseif PeekType == TokenTypes.Var then
+			return
+		elseif PeekType == TokenTypes.For then
+			return
+		elseif PeekType == TokenTypes.If then
+			return
+		elseif PeekType == TokenTypes.While then
+			return
+		elseif PeekType == TokenTypes.Print then
+			return
+		elseif PeekType == TokenTypes.Return then
+			return
+		end
+
+		self:Advance()
+	end
+end
+
+function Parser:ExpressionStatement()
+	local Expression = self:Expression()
+	
+	self:Consume(TokenTypes.SemiColon, "Expected ';' after expression.")
+	
+	return Stmt.Expression:new(Expression)
+end
+
+function Parser:ReturnStatement()
+	local Keyword = self:Previous()
+	
+	local Value
+	
+	if not self:Check(TokenTypes.SemiColon) then
+		Value = self:Expression()
+	end
+	
+	self:Consume(TokenTypes.SemiColon, "Expected ';' after return value.")
+	
+	return Stmt.Return:new(Keyword, Value)
+end
+
+function Parser:PrintStatement()
+	local Value = self:Expression()
+	
+	self:Consume(TokenTypes.SemiColon, "Expected ';' after value.")
+	
+	return Stmt.Print:new(Value)
+end
+
+function Parser:Block()
+	local Statements = {}
+	
+	while not self:Check(TokenTypes.RightBrace) and not self:IsAtEnd() do
+		table.insert(Statements, self:Declaration())
+	end
+	
+	self:Consume(TokenTypes.RightBrace, "Expected '}' after block.")
+	
+	return Statements
+end
+
+function Parser:IfStatement()
+	self:Consume(TokenTypes.LeftParen, "Expected '(' after 'if'.")
+	local Condition = self:Expression()
+	self:Consume(TokenTypes.RightParen, "Expected ')' after if condition.")
+	
+	local ThenBranch = self:Statement()
+	local ElseBranch = nil
+	
+	if self:Match(TokenTypes.Else) then
+		ElseBranch = self:Statement()
+	end
+	
+	return Stmt.If:new(Condition, ThenBranch, ElseBranch)
+end
+
+function Parser:WhileStatement()
+	self:Consume(TokenTypes.LeftParen, "Expected '(' after 'while'.")
+	local Condition = self:Expression()
+	self:Consume(TokenTypes.RightParen, "Expected ')' after condition.")
+	
+	local Body = self:Statement()
+	
+	return Stmt.While:new(Condition, Body)
+end
+
+function Parser:ForStatement()
+	self:Consume(TokenTypes.LeftParen, "Expected '(' after 'for'.")
+	
+	local Initializer
+	
+	if self:Match(TokenTypes.SemiColon) then
+		Initializer = nil
+	elseif self:Match(TokenTypes.Var) then
+		Initializer = self:VarDeclaration()
+	else
+		Initializer = self:ExpressionStatement()
+	end
+	
+	local Condition
+	if not self:Check(TokenTypes.SemiColon) then
+		Condition = self:Expression()
+	end
+	
+	self:Consume(TokenTypes.SemiColon, "Expected ';' after loop condition.")
+	
+	local Increment = nil
+	if not self:Check(TokenTypes.RightParen) then
+		Increment = self:Expression()
+	end
+	
+	self:Consume(TokenTypes.RightParen, "Expected ')' after for clauses.")
+	
+	local Body = self:Statement()
+	
+	if Increment ~= nil then
+		table.insert(Body.Statements, Stmt.Expression:new(Increment))
+	end
+	
+	if Condition == nil then Condition = Expr.Literal:new(true) end
+	local WhileStatement = Stmt.While:new(Condition, Body)
+	Body = WhileStatement
+	
+	if Initializer ~= nil then
+		local BlockStatement = Stmt.Block:new({Initializer = Initializer, Body = Body})
+		Body = BlockStatement
+	end
+	
+	return Body
+end
+
+function Parser:Fn(Kind)
+	local Name = self:Consume(TokenTypes.Identifier, "Expected " .. Kind .. " name.")
+	self:Consume(TokenTypes.LeftParen, "Expected '(' after " .. Kind .. " name.")
+	
+	local Parameters = {}
+	if not self:Check(TokenTypes.RightParen) then
+		repeat
+			if #Parameters >= 255 then
+				Error.ErrorToken(self:Peek(), "Can't have more then 255 parameters.", "Function")
+			end
+			
+			table.insert(Parameters, self:Consume(TokenTypes.Identifier, "Expected parameter name."))
+		until not self:Match(TokenTypes.Comma)
+	end
+	
+	self:Consume(TokenTypes.RightParen, "Expected ')' after parameters.")
+	
+	
+	self:Consume(TokenTypes.LeftBrace, "Expected '{' before " .. Kind ..  " body.")
+	
+	local Body = self:Block()
+	
+	return Stmt.Function:new(Name, Parameters, Body)
+end
+
+function Parser:Statement()
+	if self:Match(TokenTypes.For)       then return self:ForStatement()          end
+	if self:Match(TokenTypes.If)        then return self:IfStatement()           end
+	if self:Match(TokenTypes.Print)     then return self:PrintStatement()        end
+	if self:Match(TokenTypes.Return)    then return self:ReturnStatement()       end
+	if self:Match(TokenTypes.While)     then return self:WhileStatement()        end
+	if self:Match(TokenTypes.LeftBrace) then return Stmt.Block:new(self:Block()) end
+	
+	return self:ExpressionStatement()
+end
+
+function Parser:VarDeclaration()
+	local Name = self:Consume(TokenTypes.Identifier, "Expected variable name.")
+	local Initializer = nil
+	
+	if self:Match(TokenTypes.Equal) then
+		Initializer = self:Expression()
+	end
+	
+	self:Consume(TokenTypes.SemiColon, "Expected ';' after variable declaration.")
+	
+	return Stmt.Var:new(Name, Initializer)
+end
+
+function Parser:ClassDeclaration()
+	local Name = self:Consume(TokenTypes.Identifier, "Expected class name.")
+	
+	local Superclass
+	if self:Match(TokenTypes.Less) then
+		self:Consume(TokenTypes.Identifier, "Expected superclass name.")
+		Superclass = Expr.Variable:new(self:Previous())
+	end
+	
+	self:Consume(TokenTypes.LeftBrace, "Expected '{' before class body.")
+	
+	local Methods = {}
+	while not self:Check(TokenTypes.RightBrace) and not self:IsAtEnd() do
+		table.insert(Methods, self:Fn("method"))
+	end
+	
+	self:Consume(TokenTypes.RightBrace, "Expected '}' after class body.")
+	
+	return Stmt.Class:new(Name, Superclass, Methods)
+end
+
+function Parser:Declaration()
+	local Success, Result = pcall(function()
+		if self:Match(TokenTypes.Class) then return self:ClassDeclaration() end
+		if self:Match(TokenTypes.Fn)    then return self:Fn("function")     end
+		if self:Match(TokenTypes.Var)   then return self:VarDeclaration()   end
+
+		return self:Statement()
+	end)
+	
+	if not Success then
+		error(Result, 1)
+	end
+	
+	return Result
+end
+
+-- >> METHODS -----------------------------------------------------------------------------------------------------------------
+
+-- << Main >> --
+function Parser:Parse()
+	while not self:IsAtEnd() do
+		local Success, Result = pcall(function()
+			return self:Declaration()
+		end)
+		
+		if Success then
+			table.insert(self.Statements, Result)
+		else
+			return nil, Result:match("%[line %d+%] .*$")
+		end
+	end
+	
+	return self.Statements
+end
+
+return ParserModule]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBXD69BE3076A2243F6A463BE58F358EF88">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Interpreter</string>
+						<string name="ScriptGuid">{E9EC6329-CE9C-4754-9C0B-6FE3EA5B981E}</string>
+						<ProtectedString name="Source"><![CDATA[local TokenTypes = require(script.Parent.Enums.TokenTypes)
+local ExpressionTypes = require(script.Parent.Enums.ExpressionTypes)
+local Error = require(script.Parent.Error)
+
+local Return = require(script.Return)
+local Callable = require(script.Callable)
+local Class = require(script.Class)
+local Function = require(script.Function)
+local Helpers = require(script.Helpers)
+
+local Environment = require(script.Parent.Classes.Environment)
+local Expr = require(script.Parent.Classes.Expr)
+local Stmt = require(script.Parent.Classes.Stmt)
+
+local InterpreterModule = {}
+local Interpreter = {}
+
+function InterpreterModule.new()
+	local Inter = setmetatable({}, {__index = Interpreter})
+	
+	Inter.Globals = Environment:new()
+	Inter.Environment = Inter.Globals
+	Inter.Locals = {}
+	
+	-- << BUILTINS -----------------------------------------------------------------------------------------------------------
+	local PrintBuiltin = Callable:new("<native fn>")
+	PrintBuiltin.Arity = function(self)
+		return 1
+	end
+	
+	PrintBuiltin.Call = function(self, Interpreter, Arguments)
+		local Value = Arguments[1]
+		
+		local Success, Result = pcall(function()
+			return loadstring('return "' .. Helpers.Stringify(Value) .. '"')()
+		end)
+
+		if Success then
+			print(Result)
+		end
+	end
+	
+	local ClockBuiltin = Callable:new("<native fn>")
+	ClockBuiltin.Arity = function(self)
+		return 0
+	end
+	
+	ClockBuiltin.Call = function(self, Interpreter, Arguments)
+		return os.clock()
+	end
+	
+	Inter.Globals:Define("clock", ClockBuiltin)
+	Inter.Globals:Define("print", PrintBuiltin)
+	
+	-- >> BUILTINS -----------------------------------------------------------------------------------------------------------
+
+	-- << OVERRIDES ----------------------------------------------------------------------------------------------------------
+	
+	-- << IMPLEMENTS ------------------------------------------
+	Inter.ExprVisitor = Expr.Visitor:new()
+	Inter.StmtVisitor = Stmt.Visitor:new()
+	-- >> IMPLEMENTS ------------------------------------------
+
+	-- << EXPRESSION OVERRIDES --------------------------------------------------------------------------
+	
+	-- @Override
+	Inter.ExprVisitor.visitLiteralExpr = function(self, Expression)
+		return Expression.Value
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitLogicalExpr = function(self, Expression)
+		local Left = Inter:Evaluate(Expression.Left, "Logical | Left")
+		
+		if Expression.Operator.Type == TokenTypes.Or then
+			if Helpers.IsTruthy(Left) then return Left end
+		else
+			if not Helpers.IsTruthy(Left) then return Left end
+		end
+		
+		return Inter:Evaluate(Expression.Right, "Logical")
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitGroupingExpr = function(self, Expression)
+		return Inter:Evaluate(Expression.Expression, "Grouping")
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitUnaryExpr = function(self, Expression)
+		local Right = Inter:Evaluate(Expression.Right, "Unary")
+		
+		if Expression.Operator.Type == TokenTypes.Minus then
+			Helpers.CheckNumberOperand(Expression.Operator, Right)
+			return -tonumber(Right)
+		elseif Expression.Operator.Type == TokenTypes.Bang then
+			return not Helpers.IsTruthy(Right)
+		end
+		
+		return nil
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitBinaryExpr = function(self, Expression)
+		local Left  = Inter:Evaluate(Expression.Left, "Binary | Left")
+		local Right = Inter:Evaluate(Expression.Right, "Binary | Right")
+		
+		local Operator = Expression.Operator.Type
+		
+		if     Operator == TokenTypes.Greater      then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) >  tonumber(Right)
+		elseif Operator == TokenTypes.GreaterEqual then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) >= tonumber(Right)
+		elseif Operator == TokenTypes.Less         then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) <  tonumber(Right)
+		elseif Operator == TokenTypes.LessEqual    then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) <= tonumber(Right)
+		elseif Operator == TokenTypes.Minus        then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) - tonumber(Right)
+		elseif Operator == TokenTypes.Plus         then
+			if tonumber(Left) and tonumber(Right) then
+				return tonumber(Left) + tonumber(Right)
+			end
+			
+			if tostring(Left) and tostring(Right) then
+				return tostring(Left) .. tostring(Right)
+			end
+			
+			Error.ErrorToken(Expression.Operator, "Operands must be two numbers, or numbers and strings.", "Plus")
+		elseif Operator == TokenTypes.Slash        then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) / tonumber(Right)
+		elseif Operator == TokenTypes.Star         then
+			Helpers.CheckNumberOperands(Expression.Operator, Left, Right)
+			return tonumber(Left) * tonumber(Right)
+		elseif Operator == TokenTypes.BangEqual    then
+			return not Helpers.IsEqual(Left, Right)
+		elseif Operator == TokenTypes.EqualEqual   then
+			return     Helpers.IsEqual(Left, Right)
+		end
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitCallExpr = function(self, Expression)
+		local Callee = Inter:Evaluate(Expression.Callee, "Call")
+		
+		local Arguments = {}
+		
+		for _, Argument in Expression.Arguments do
+			table.insert(Arguments, Inter:Evaluate(Argument, "Call"))
+		end
+		
+		if Expression.Type ~= ExpressionTypes.Call then
+			Error.ErrorToken(Expression.Paren, "Can only call functions and classes.", "visitCallExpr | Comparison")
+		end
+		
+		if #Arguments ~= Callee:Arity() then
+			Error.ErrorToken(Expression.Paren, "Expected " .. Callee:Arity() .. " arguments but got " .. #Arguments .. ".", "visitCallExpr | Arity")
+		end
+		
+		return Callee:Call(Inter, Arguments)
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitGetExpr = function(self, Expression)
+		local Object = Inter:Evaluate(Expression.Object)
+		
+		if getmetatable(Object).__isinstance then
+			return Object:Get(Expression.Name)
+		end
+		
+		Error.ErrorToken(Expression.Name, "Only instances have properties.", "visitGetExpr")
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitVariableExpr = function(self, Expression)
+		return Inter:LookUpVariable(Expression.Name, Expression)
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitAssignExpr = function(self, Expression)
+		local Value = Inter:Evaluate(Expression.Value, "Assign")
+		
+		local Distance = Inter.Locals[Expression]
+		
+		if Distance ~= nil then
+			Inter.Environment:AssignAt(Distance, Expression.Name, Value)
+		else
+			Inter.Globals:Assign(Expression.Name, Value)
+		end
+		
+		return Value
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitSetExpr = function(self, Expression)
+		local Object = Inter:Evaluate(Expression.Object)
+		
+		if not getmetatable(Object).__isinstance then
+			Error.ErrorToken(Expression.Name, "Only instances have fields.", "visitSetExpr")
+		end
+		
+		local Value = Inter:Evaluate(Expression.Value)
+		
+		Object:Set(Expression.Name, Value)
+		
+		return Value
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitSuperExpr = function(self, Expression)
+		local Distance = Inter.Locals[Expression]
+		
+		local Superclass = Inter.Environment:GetAt(Distance, "super")
+		
+		local Object = Inter.Environment:GetAt(Distance - 1, "this")
+		
+		local Method = Superclass:FindMethod(Expression.Method.Lexeme)
+		
+		if Method == nil then
+			Error.ErrorToken(Expression.Method, "Undefined property '" .. Expression.Method.Lexeme .. "'.", "visitSuperExpr")
+		end
+		
+		return Method:Bind(Object)
+	end
+
+	-- @Override
+	Inter.ExprVisitor.visitThisExpr = function(self, Expression)
+		return Inter:LookUpVariable(Expression.Keyword, Expression)
+	end
+	
+
+	-- >> EXPRESSION OVERRIDES --------------------------------------------------------------------------
+	-- << STATEMENT OVERRIDES ---------------------------------------------------------------------------
+
+	-- @Override
+	Inter.StmtVisitor.visitExpressionStmt = function(self, Statement)
+		Inter:Evaluate(Statement.Expression, "Expression")
+		
+		return
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitFunctionStmt = function(self, Statement)
+		local Fn = Function.new(Statement, Inter.Environment, false)
+		
+		Inter.Environment:Define(Statement.Name.Lexeme, Fn)
+		
+		return
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitIfStmt = function(self, Statement)
+		if Helpers.IsTruthy(Inter:Evaluate(Statement.Condition, "If")) then
+			Inter:Execute(Statement.ThenBranch)
+		elseif Statement.ElseBranch ~= nil then
+			Inter:Execute(Statement.ElseBranch)
+		end
+		
+		return nil
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitPrintStmt = function(self, Statement)
+		local Value = Inter:Evaluate(Statement.Expression, "Print")
+		print(Helpers.Stringify(Value))
+		
+		return
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitReturnStmt = function(self, Statement)
+		local Value
+		
+		if Statement.Value ~= nil then Value = Inter:Evaluate(Statement.Value, "Return 232") end
+		
+		error(Return.new(Value))
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitVarStmt = function(self, Statement)
+		local Value = nil
+		
+		if Statement.Initializer ~= nil then
+			Value = Inter:Evaluate(Statement.Initializer, "Var")
+		end
+		
+		Inter.Environment:Define(Statement.Name.Lexeme, Value)
+
+		return
+	end
+	
+	-- @Override
+	Inter.StmtVisitor.visitWhileStmt = function(self, Statement)
+		while Helpers.IsTruthy(Inter:Evaluate(Statement.Condition, "While")) do
+			Inter:Execute(Statement.Body)
+		end
+		
+		return
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitBlockStmt = function(self, Statement)
+		Inter:ExecuteBlock(Statement.Statements, Environment:new(Inter.Environment))
+		return
+	end
+
+	-- @Override
+	Inter.StmtVisitor.visitClassStmt = function(self, Statement)
+		local Superclass = nil
+		
+		if Statement.Superclass ~= nil then
+			Superclass = Inter:Evaluate(Statement.Superclass)
+			
+			if not getmetatable(Superclass).__isclass then
+				Error.ErrorToken(Statement.Superclass.Name, "Superclass must be a class.", "visitClassStmt")
+			end
+		end
+		
+		Inter.Environment:Define(Statement.Name.Lexeme, true)
+		
+		if Statement.Superclass ~= nil then
+			Inter.Environment = Environment:new(Inter.Environment)
+			Inter.Environment:Define("super", Superclass)
+		end
+		
+		local Methods = {}
+		for _, Method in Statement.Methods do
+			local Func = Function.new(Method, Inter.Environment, (Method.Name.Lexeme == "init"))
+			Methods[Method.Name.Lexeme] = Func
+		end
+		
+		local Klass = Class.new(Statement.Name.Lexeme, Superclass, Methods)
+		Inter.Environment:Assign(Statement.Name, Klass)
+		
+		if Superclass ~= nil then
+			Inter.Environment = Inter.Environment.Enclosing
+		end
+		
+		Inter.Environment:Assign(Statement.Name, Klass)
+		return
+	end
+	
+	-- >> STATEMENT OVERRIDES ---------------------------------------------------------------------------
+
+	-- >> OVERRIDES ----------------------------------------------------------------------------------------------------------
+	
+	return Inter
+end
+
+-- << METHODS -----------------------------------------------------------------------------------------------------------------
+
+function Interpreter:LookUpVariable(Name, Expression)
+	local Distance = self.Locals[Expression]
+	
+	if Distance ~= nil then
+		return self.Environment:GetAt(Distance, Name.Lexeme)
+	else
+		return self.Globals:Get(Name)
+	end
+end
+
+function Interpreter:ExecuteBlock(Statements, Environment)
+	local Previous = self.Environment
+	
+	local Success, Result = pcall(function()
+		self.Environment = Environment
+		
+		for _, Statement in Statements do
+			self:Execute(Statement)
+		end
+	end)
+	
+	self.Environment = Previous
+	
+	return Success, Result
+end
+
+function Interpreter:Evaluate(Expression, Debug)
+	return Expression:Accept(self.ExprVisitor)
+end
+
+function Interpreter:Execute(Statement)
+	Statement:Accept(self.StmtVisitor)
+end
+
+function Interpreter:Resolve(Expression, Depth)
+	self.Locals[Expression] = Depth
+end
+
+-- >> METHODS -----------------------------------------------------------------------------------------------------------------
+
+-- << MAIN >> --
+
+function Interpreter:Interpret(Statements)
+	for _, Statement in Statements do
+		local Success, Result = pcall(function()
+			return self:Execute(Statement)
+		end)
+
+		if not Success then
+			return Result:match("%[line %d+%] .*$")
+		end
+	end
+end
+
+return InterpreterModule]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX2EFDAD662EB64B6A9A90C99E295E1AC0">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Class</string>
+							<string name="ScriptGuid">{53196495-3590-4904-A324-830C784C03AA}</string>
+							<ProtectedString name="Source"><![CDATA[local Callable = require(script.Parent.Callable)
+local InstanceClass = require(script.Parent.Instance)
+
+local ClassModule = {}
+
+function ClassModule.new(Name, Superclass, Methods)
+	local Class = Callable:new(Name)
+	
+	getmetatable(Class).__isclass = true
+	
+	Class.Superclass = Superclass
+	Class.Name = Name
+	Class.Methods = Methods
+	
+	Class.Call = function(self, Interpreter, Arguments)
+		local Inst = InstanceClass.new(Class)
+		local Initializer = Class:FindMethod("init")
+		if Initializer ~= nil then
+			Initializer:Bind(Inst):Call(Interpreter, Arguments)
+		end
+		
+		return Inst
+	end
+	
+	Class.Arity = function(self)
+		local Initializer = Class:FindMethod("init")
+		
+		if Initializer == nil then
+			return 0
+		end
+		
+		return Initializer:Arity()
+	end
+	
+	Class.FindMethod = function(self, Name)
+		if Class.Methods[Name] then
+			return Class.Methods[Name]
+		end
+		
+		if Superclass ~= nil then
+			return Superclass:FindMethod(Name)
+		end
+		
+		return
+	end
+	
+	return Class
+end
+
+return ClassModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX2092618E0CD04AA392DCBB29349CA03F">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Return</string>
+							<string name="ScriptGuid">{0A882F49-9C08-4050-A64A-91CCD3E1004F}</string>
+							<ProtectedString name="Source"><![CDATA[local ReturnModule = {}
+local Return = {}
+
+function ReturnModule.new(value)
+	local self = setmetatable({}, {__index = Return, __isreturn = true})
+	
+	self.Value = value
+	
+	return self
+end
+
+return ReturnModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX888692BBEC864FEFB9AA61413D0D2F62">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Function</string>
+							<string name="ScriptGuid">{24763D98-7A1E-4214-A69A-47C333A24B3A}</string>
+							<ProtectedString name="Source"><![CDATA[local Callable = require(script.Parent.Callable)
+local EnvironmentModule = require(script.Parent.Parent.Classes.Environment)
+local Return = require(script.Parent.Return)
+
+local FnModule = {}
+
+function FnModule.new(Declaration, Closure, IsInitializer)
+	local Fn = Callable:new("<fn " .. Declaration.Name.Lexeme .. ">")
+	
+	Fn.Call = function(self, Interpreter, Arguments)
+		local Environment = EnvironmentModule:new(Closure)
+		
+		for i = 1, #Declaration.Params do
+			Environment:Define(Declaration.Params[i].Lexeme, Arguments[i])
+		end
+		
+		local _, Success, Result = pcall(function()
+			return Interpreter:ExecuteBlock(Declaration.Body, Environment)
+		end)
+		
+		if not Success and getmetatable(Result).__isreturn then
+			if IsInitializer then return Closure:GetAt(0, "this") end
+			
+			return Result.Value
+		end
+		
+		if IsInitializer then
+			return Closure:GetAt(0, "this")
+		end
+		
+		return
+	end
+	
+	Fn.Arity = function(self)
+		return #Declaration.Params
+	end
+	
+	Fn.Bind = function(self, Inst)
+		local Environment = EnvironmentModule:new(Closure)
+		Environment:Define("this", Inst)
+		
+		return FnModule.new(Declaration, Environment, IsInitializer)
+	end
+	
+	return Fn
+end
+
+return FnModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX812CEE92DC3A405FB4881626308C313A">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Instance</string>
+							<string name="ScriptGuid">{904A3628-D190-420D-83BE-E20CF6356125}</string>
+							<ProtectedString name="Source"><![CDATA[local Error = require(script.Parent.Parent.Error)
+
+local InstanceModule = {}
+local Instan = {}
+
+function InstanceModule.new(Klass)
+	local Inst = setmetatable({}, {__index = Instan, __isinstance = true, __tostring = function() return Klass.Name .. " instance" end})
+	
+	Inst.Klass = Klass
+	Inst.Fields = {}
+	
+	return Inst
+end
+
+function Instan:Get(Name)
+	if self.Fields[Name.Lexeme] then
+		return self.Fields[Name.Lexeme]
+	end
+	
+	local Method = self.Klass:FindMethod(Name.Lexeme)
+	if Method ~= nil then return Method:Bind(self) end
+	
+	Error.ErrorToken(Name, "Undefined property '" .. Name.Lexeme .. "'.")
+end
+
+function Instan:Set(Name, Value)
+	self.Fields[Name.Lexeme] = Value
+end
+
+return InstanceModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX22CEB8A3DF6447F3A8A37550574ACC52">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Callable</string>
+							<string name="ScriptGuid">{0099D590-8949-41B1-8188-87E495F2DBE5}</string>
+							<ProtectedString name="Source"><![CDATA[local ExpressionTypes = require(script.Parent.Parent.Enums.ExpressionTypes)
+
+local CallableModule = {}
+
+function CallableModule:new(Type)
+	return setmetatable({}, {__index = CallableModule, __tostring = function() return Type end})
+end
+
+function CallableModule:Arity()
+	return
+end
+
+function CallableModule:Call(Interpreter, Arguments)
+	return "This shouldn't happen"
+end
+
+return CallableModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBXFE4A73F6E2634C07804900B5BEF83F91">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Helpers</string>
+							<string name="ScriptGuid">{72EBCB57-271F-47D9-916F-649C28182089}</string>
+							<ProtectedString name="Source"><![CDATA[local Error = require(script.Parent.Parent.Error)
+
+local Helpers = {}
+
+function Helpers.Stringify(Object)
+	if Object == nil then return "nil" end
+
+	if tonumber(Object) then
+		local Text = tostring(Object)
+
+		if Text:sub(#Text - 2, #Text) == ".0" then
+			Text = Text:sub(0, #Text - 2)
+		end
+
+		return Text
+	end
+
+	return tostring(Object)
+end
+
+function Helpers.IsTruthy(Object)
+	if Object == nil then return false end
+	if typeof(Object) == "boolean" then return Object end
+
+	return true
+end
+
+function Helpers.IsEqual(A, B)
+	if A == nil and B == nil then return true end
+	if A == nil then return false end
+
+	return A == B
+end
+
+function Helpers.CheckNumberOperand(Operator, Operand)
+	if tonumber(Operand) then return end
+
+	Error.ErrorToken(Operator, "Operand must be a number.", "CheckNumberOperand")
+end
+
+function Helpers.CheckNumberOperands(Operator, Left, Right)
+	if tonumber(Left) and tonumber(Right) then return end
+
+	Error.ErrorToken(Operator, "Operands must be numbers.", "CheckNumberOperands")
+end
+
+return Helpers]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="ModuleScript" referent="RBX5E4678F45AFA49D29E488CD924584583">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Resolver</string>
+						<string name="ScriptGuid">{1BEA66DE-60AB-4C1B-B3B6-795D7F07BC65}</string>
+						<ProtectedString name="Source"><![CDATA[local Error = require(script.Parent.Error)
+
+local Expr = require(script.Parent.Classes.Expr)
+local Stmt = require(script.Parent.Classes.Stmt)
+
+-- << ENUMS -------------------------------------------------------------------------------------------------------------------
+
+local FunctionType = {
+	None = 0,
+	Function = 1,
+	Method = 2,
+	Initializer = 3,
+}
+
+local ClassType = {
+	None = 0,
+	Class = 1,
+	Subclass = 3
+}
+
+-- >> ENUMS -------------------------------------------------------------------------------------------------------------------
+
+local ResolverModule = {}
+local Resolver = {}
+
+function ResolverModule.new(Interpreter)
+	local Res = setmetatable({}, {__index = Resolver})
+
+	Res.Interpreter = Interpreter
+	Res.Scopes = {}
+	Res.CurrentFunction = FunctionType.None
+	Res.CurrentClass = ClassType.None
+	
+	-- << OVERRIDES ----------------------------------------------------------------------------------------------------------
+
+	-- << IMPLEMENTS ------------------------------------------
+	Res.StmtVisitor = Stmt.Visitor:new()
+	Res.ExprVisitor = Expr.Visitor:new()
+	-- >> IMPLEMENTS ------------------------------------------
+	
+	-- << STATEMENT OVERRIDES ---------------------------------------------------------------------------
+	
+	-- @Override
+	Res.StmtVisitor.visitBlockStmt = function(self, Statement)
+		Res:BeginScope()
+
+		Res:ResolveStatements(Statement.Statements)
+
+		Res:EndScope()
+
+		return
+	end
+	
+	-- @Override
+	Res.StmtVisitor.visitClassStmt = function(self, Statement)
+		local EnclosingClass = Res.CurrentClass
+		Res.CurrentClass = ClassType.Class
+		
+		Res:Declare(Statement.Name)
+		Res:Define(Statement.Name)
+		
+		if Statement.Superclass ~= nil and Statement.Name.Lexeme == Statement.Superclass.Name.Lexeme then
+			Error.ErrorToken(Statement.Superclass.Name, "A class can't inherit from itself.")
+		end
+		
+		if Statement.Superclass ~= nil then
+			Res.CurrentClass = ClassType.Subclass
+			Res:ResolveExpr(Statement.Superclass)
+		end
+		
+		if Statement.Superclass ~= nil then
+			Res:BeginScope()
+			Res.Scopes[#Res.Scopes]["super"] = true
+		end
+		
+		Res:BeginScope()
+		Res.Scopes[#Res.Scopes]["this"] = true
+		
+		for _, Method in Statement.Methods do
+			local Declaration = FunctionType.Method
+			if Method.Name.Lexeme == "init" then
+				Declaration = FunctionType.Initializer
+			end
+			
+			Res:ResolveFunction(Method, Declaration)
+		end
+		
+		Res:EndScope()
+		
+		if Statement.Superclass ~= nil then Res:EndScope() end
+		
+		Res.CurrentClass = EnclosingClass
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitVarStmt = function(self, Statement)
+		Res:Declare(Statement.Name)
+
+		if Statement.Initializer ~= nil then
+			Res:ResolveExpr(Statement.Initializer, "visitVarStmt")
+		end
+
+		Res:Define(Statement.Name)
+
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitFunctionStmt = function(self, Statement)
+		Res:Declare(Statement.Name)
+		Res:Define(Statement.Name)
+
+		Res:ResolveFunction(Statement, FunctionType.Function)
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitExpressionStmt = function(self, Statement)
+		Res:ResolveExpr(Statement.Expression, "visitIfStmt | Expression")
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitIfStmt = function(self, Statement)
+		Res:ResolveExpr(Statement.Condition, "visitIfStmt | Condition")
+		Res:ResolveExpr(Statement.ThenBranch, "visitIfStmt | Then")
+		
+		if Statement.ElseBranch ~= nil then
+			Res:ResolveExpr(Statement.ElseBranch, "visitIfStmt | Else")
+		end
+		
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitPrintStmt = function(self, Statement)
+		Res:ResolveExpr(Statement.Expression, "visitPrintStmt")
+		
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitReturnStmt = function(self, Statement)
+		if Res.CurrentFunction == FunctionType.None then
+			Error.ErrorToken(Statement.Keyword, "Can't return from top-level code.")
+		end
+		
+		if Statement.Value ~= nil then
+			if Res.CurrentFunction == FunctionType.Initializer then
+				Error.ErrorToken(Statement.Keyword, "Can't return a value from an initializer.")
+			end
+			
+			Res:ResolveExpr(Statement.Value, "visitReturnStmt | Value")
+		end
+
+		return
+	end
+
+	-- @Override
+	Res.StmtVisitor.visitWhileStmt = function(self, Statement)
+		Res:ResolveExpr(Statement.Condition, "visitWhileStmt | Condition")
+		Res:ResolveExpr(Statement.Body, "visitWhileStmt | Body")
+		
+		return
+	end
+
+	-- >> STATEMENT OVERRIDES ---------------------------------------------------------------------------
+	-- << EXPRESSION OVERRIDES---------------------------------------------------------------------------
+
+	-- @Override
+	Res.ExprVisitor.visitVariableExpr = function(self, Expression)
+		if #Res.Scopes ~= 0 and Res.Scopes[#Res.Scopes][Expression.Name.Lexeme] == false then
+			Error.ErrorToken(Expression.Name, "Can't read local variable in its own initializer.")
+		end
+
+		Res:ResolveLocal(Expression, Expression.Name)
+
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitAssignExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Value, "visitAssignExpr")
+		Res:ResolveLocal(Expression, Expression.Name)
+
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitBinaryExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Left, "visitBinaryExpr | Left")
+		Res:ResolveExpr(Expression.Right, "visitBinaryExpr | Right")
+		
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitCallExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Callee, "visitCallExpr")
+		
+		for _, Argument in Expression.Arguments do
+			Res:ResolveExpr(Argument, "visitCallExpr | Argument")
+		end
+
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitGetExpr = function(self, Expresion)
+		Res:ResolveExpr(Expresion.Object, "visitGetExpr")
+		
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitGroupingExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Expression, "visitGroupingExpr")
+
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitLiteralExpr = function(self, Expression)
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitLogicalExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Left, "visitLogicalExpr | Left")
+		Res:ResolveExpr(Expression.Right, "visitLogicalExpr | Right")
+		
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitSetExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Value, "visitSetExpr | Value")
+		Res:ResolveExpr(Expression.Object, "visitSetExpr | Object")
+		
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitThisExpr = function(self, Expression)
+		if Res.CurrentClass == ClassType.None then
+			Error.ErrorToken(Expression.Keyword, "Can't use 'this' outside of class.")
+		end
+		
+		Res:ResolveLocal(Expression, Expression.Keyword)
+		
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitUnaryExpr = function(self, Expression)
+		Res:ResolveExpr(Expression.Right, "visitUnaryExpr")
+		
+		return
+	end
+
+	-- @Override
+	Res.ExprVisitor.visitSuperExpr = function(self, Expression)
+		if Res.CurrentClass == ClassType.None then
+			Error.ErrorToken(Expression.Keyword, "Can't use 'super' outside of class.")
+		elseif Res.CurrentClass ~= ClassType.Subclass then
+			Error.ErrorToken(Expression.Keyword, "Can't use 'super' in a class with no superclass.")
+		end
+		
+		Res:ResolveLocal(Expression, Expression.Keyword)
+		
+		return
+	end
+
+	-- >> EXPRESSION OVERRIDES---------------------------------------------------------------------------
+
+	return Res
+end
+
+
+-- << METHODS -----------------------------------------------------------------------------------------------------------------
+
+function Resolver:ResolveFunction(Function, Type)
+	local EnclosingFunction = self.CurrentFunction
+	self.CurrentFunction = Type
+	
+	self:BeginScope()
+	
+	for _, Param in Function.Params do
+		self:Declare(Param)
+		self:Define(Param)
+	end
+	
+	self:ResolveStatements(Function.Body, "ResolveFunction")
+	
+	self:EndScope()
+	self.CurrentFunction = EnclosingFunction
+end
+
+function Resolver:ResolveLocal(Expression, Name)
+	for i = #self.Scopes, 1, -1 do
+		if self.Scopes[i][Name.Lexeme] then
+			self.Interpreter:Resolve(Expression, #self.Scopes - i)
+
+			return
+		end
+	end
+end
+
+function Resolver:Declare(Name)
+	if #self.Scopes == 0 then return end
+
+	local Scope = self.Scopes[#self.Scopes]
+	
+	if Scope[Name.Lexeme] then
+		Error.ErrorToken(Name, "Already a variable with this name in this scope.")
+	end
+
+	Scope[Name.Lexeme] = false
+end
+
+function Resolver:Define(Name)
+	if #self.Scopes == 0 then return end
+
+	self.Scopes[#self.Scopes][Name.Lexeme] = true
+end
+
+function Resolver:BeginScope()
+	table.insert(self.Scopes, {})
+end
+
+function Resolver:EndScope()
+	table.remove(self.Scopes)
+end
+
+function Resolver:ResolveExpr(Expression, Debug)
+	Expression:Accept(self.ExprVisitor)
+end
+
+function Resolver:ResolveStmt(Statement, Debug)
+	Statement:Accept(self.StmtVisitor)
+end
+
+-- >> METHODS -----------------------------------------------------------------------------------------------------------------
+
+
+-- << MAIN >> --
+function Resolver:ResolveStatements(Statements)
+	for _, Statement in Statements do
+		local Success, Result = pcall(function()
+			return self:ResolveStmt(Statement, "ResolveStatements")
+		end)
+
+		if not Success then
+			return Result:match("%[line %d+%] .*$")
+		end
+	end
+end
+
+return ResolverModule]]></ProtectedString>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="Folder" referent="RBX4A7C0C31BA4443AA8857D20EA3F7330E">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<string name="Name">Enums</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX0132FC9C07AE4EB493237A0272CB52EF">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">ExpressionTypes</string>
+							<string name="ScriptGuid">{85A2B2D3-DDD9-4095-BE0C-A6CAB037FA1F}</string>
+							<ProtectedString name="Source"><![CDATA[local ExpressionTypes = {
+	Assign   = 1,
+	Binary   = 2,
+	Call     = 3,
+	Get      = 4,
+	Grouping = 5,
+	Literal  = 6,
+	Logical  = 7,
+	Set      = 8,
+	Super    = 9,
+	This     = 10,
+	Unary    = 11,
+	Variable = 12
+}
+
+return ExpressionTypes
+]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX071AA4468725499B842FA867D3659CEA">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">TokenTypes</string>
+							<string name="ScriptGuid">{79E91C8B-10A0-4909-80CA-54CE11E8E052}</string>
+							<ProtectedString name="Source"><![CDATA[local TokenTypes = {
+	LeftParen = 1, RightParen = 2, LeftBrace = 3, RightBrace = 4,
+	Comma = 5, Dot = 6, Minus = 7, Plus = 8, SemiColon = 9, Slash = 10, Star = 11,
+	
+	Bang = 12, BangEqual = 13,
+	Equal = 14, EqualEqual = 15,
+	Greater = 16, GreaterEqual = 17,
+	Less = 18, LessEqual = 19,
+	
+	Identifier = 20, String = 21, Number = 22,
+	
+	And = 23, Class = 24, Else = 25, False = 26, Fn = 27, For = 28, If = 29, Nil = 30, Or = 31,
+	Print = 32, Return = 33, Super = 34, This = 35, True = 36, Var = 37, While = 38,
+	
+	Eof = 39, Space = 40, Tab = 41
+}
+
+return TokenTypes]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+				<Item class="Folder" referent="RBX2CFE2BF586744040BC25710D225820B3">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<string name="Name">Classes</string>
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+					<Item class="ModuleScript" referent="RBX396FE97C51D64C2DB44207833E8752EF">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Expr</string>
+							<string name="ScriptGuid">{1E48E1B1-81AE-465B-9EFC-F4E3282A602F}</string>
+							<ProtectedString name="Source"><![CDATA[local ExpressionTypes = require(script.Parent.Parent.Enums.ExpressionTypes)
+
+local ExprModule = {}
+local Expr = {}
+
+function Expr:new(o)
+	o = o or {}
+	
+	setmetatable(o, self)
+	self.__index = self
+	
+	return o
+end
+
+local Assign = Expr:new()
+function Assign:new(Name, Value)
+	local o = Expr.new(self)
+
+	o.Name = Name
+	o.Value = Value
+	o.Type = ExpressionTypes.Assign
+
+	return o
+end
+
+function Assign:Accept(Visitor)
+	return Visitor:visitAssignExpr(self)
+end
+
+local Binary = Expr:new()
+function Binary:new(Left, Operator, Right)
+	local o = Expr.new(self)
+
+	o.Left = Left
+	o.Operator = Operator
+	o.Right = Right
+	o.Type = ExpressionTypes.Binary
+
+	return o
+end
+
+function Binary:Accept(Visitor)
+	return Visitor:visitBinaryExpr(self)
+end
+
+local Call = Expr:new()
+function Call:new(Callee, Paren, Arguments)
+	local o = Expr.new(self)
+
+	o.Callee = Callee
+	o.Paren = Paren
+	o.Arguments = Arguments
+	o.Type = ExpressionTypes.Call
+
+	return o
+end
+
+function Call:Accept(Visitor)
+	return Visitor:visitCallExpr(self)
+end
+
+local Get = Expr:new()
+function Get:new(Object, Name)
+	local o = Expr.new(self)
+	
+	o.Object = Object
+	o.Name = Name
+	o.Type = ExpressionTypes.Get
+
+	return o
+end
+
+function Get:Accept(Visitor)
+	return Visitor:visitGetExpr(self)
+end
+
+local Grouping = Expr:new()
+function Grouping:new(Expression)
+	local o = Expr.new(self)
+	
+	o.Expression = Expression
+	o.Type = ExpressionTypes.Grouping
+	
+	return o
+end
+
+function Grouping:Accept(Visitor)
+	return Visitor:visitGroupingExpr(self)
+end
+
+local Literal = Expr:new()
+function Literal:new(Value)
+	local o = Expr.new(self)
+	
+	o.Value = Value
+	o.Type = ExpressionTypes.Literal
+	
+	return o
+end
+
+function Literal:Accept(Visitor)
+	return Visitor:visitLiteralExpr(self)
+end
+
+local Logical = Expr:new()
+function Logical:new(Left, Operator, Right)
+	local o = Expr.new(self)
+	
+	o.Left = Left
+	o.Operator = Operator
+	o.Right = Right
+	o.Type = ExpressionTypes.Logical
+	
+	return o
+end
+
+function Logical:Accept(Visitor)
+	return Visitor:visitLogicalExpr(self)
+end
+
+local Set = Expr:new()
+function Set:new(Object, Name, Value)
+	local o = Expr.new(self)
+	
+	o.Object = Object
+	o.Name = Name
+	o.Value = Value
+	o.Type = ExpressionTypes.Set
+	
+	return o
+end
+
+function Set:Accept(Visitor)
+	return Visitor:visitSetExpr(self)
+end
+
+local Super = Expr:new()
+function Super:new(Keyword, Method)
+	local o = Expr.new(self)
+	
+	o.Keyword = Keyword
+	o.Method = Method
+	o.Type = ExpressionTypes.Super
+	
+	return o
+end
+
+function Super:Accept(Visitor)
+	return Visitor:visitSuperExpr(self)
+end
+
+local This = Expr:new()
+function This:new(Keyword)
+	local o = Expr.new(self)
+	
+	o.Keyword = Keyword
+	o.Type = ExpressionTypes.This
+	
+	return o
+end
+
+function This:Accept(Visitor)
+	return Visitor:visitThisExpr(self)
+end
+
+local Unary = Expr:new()
+function Unary:new(Operator, Right)
+	local o = Expr.new(self)
+	
+	o.Operator = Operator
+	o.Right = Right
+	o.Type = ExpressionTypes.Unary
+	
+	return o
+end
+
+function Unary:Accept(Visitor)
+	return Visitor:visitUnaryExpr(self)
+end
+
+local Variable = Expr:new()
+function Variable:new(Name)
+	local o = Expr.new(self)
+	
+	o.Name = Name
+	o.Type = ExpressionTypes.Variable
+	
+	return o
+end
+
+function Variable:Accept(Visitor)
+	return Visitor:visitVariableExpr(self)
+end
+
+local Visitor = {}
+
+function Visitor:new()
+	local o = {}
+	
+	setmetatable(o, self)
+	self.__index = self
+	
+	return o
+end
+
+function Visitor:visitAssignExpr(Expression)
+end
+
+function Visitor:visitBinaryExpr(Expression)
+end
+
+function Visitor:visitCallExpr(Expression)
+end
+
+function Visitor:visitGetExpr(Expression)
+end
+
+function Visitor:visitGroupingExpr(Expression)
+end
+
+function Visitor:visitLiteralExpr(Expression)
+end
+
+function Visitor:visitLogicalExpr(Expression)
+end
+
+function Visitor:visitSetExpr(Expression)
+end
+
+function Visitor:visitSuperExpr(Expression)
+end
+
+function Visitor:visitThisExpr(Expression)
+end
+
+function Visitor:visitUnaryExpr(Expression)
+end
+
+function Visitor:visitVariableExpr(expr)
+end
+
+ExprModule.Expr     = Expr
+ExprModule.Assign   = Assign
+ExprModule.Binary   = Binary
+ExprModule.Call     = Call
+ExprModule.Get      = Get
+ExprModule.Grouping = Grouping
+ExprModule.Literal  = Literal
+ExprModule.Logical  = Logical
+ExprModule.Set      = Set
+ExprModule.Super    = Super
+ExprModule.This     = This
+ExprModule.Unary    = Unary
+ExprModule.Variable = Variable
+ExprModule.Visitor  = Visitor
+
+return ExprModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX6AFED2384DA34FF999BA2CCC11CD8F41">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Stmt</string>
+							<string name="ScriptGuid">{A882B952-DA23-4212-85E9-62A90499D913}</string>
+							<ProtectedString name="Source"><![CDATA[local Expr = require(script.Parent.Expr)
+
+function Stringify(Object)
+	if Object == nil then return "nil" end
+
+	if tonumber(Object) then
+		local Text = tostring(Object)
+
+		if Text:reverse():sub(1,2):reverse() == ".0" then
+			Text = Text:sub(1, #Text - 2)
+		end
+
+		return Text
+	end
+
+	return tostring(Object)
+end
+
+local StmtModule = {}
+local Stmt = {}
+
+function Stmt:new(o)
+	o = o or {}
+
+	setmetatable(o, self)
+	self.__index = self
+
+	return o
+end
+
+local Block = Stmt:new()
+function Block:new(Statements)
+	local o = Stmt.new(self)
+	
+	o.Statements = Statements
+	
+	return o
+end
+
+function Block:Accept(Visitor)
+	return Visitor:visitBlockStmt(self)
+end
+
+local Class = Stmt:new()
+function Class:new(Name, Superclass, Methods)
+	local o = Stmt.new(self)
+
+	o.Name = Name
+	o.Superclass = Superclass
+	o.Methods = Methods
+
+	return o
+end
+
+function Class:Accept(Visitor)
+	return Visitor:visitClassStmt(self)
+end
+
+local Expression = Stmt:new()
+function Expression:new(Expr)
+	local o = Stmt.new(self)
+
+	o.Expression = Expr
+
+	return o
+end
+
+function Expression:Accept(Visitor)
+	return Visitor:visitExpressionStmt(self)
+end
+
+local Function = Stmt:new()
+function Function:new(Name, Params, Body)
+	local o = Stmt.new(self)
+	
+	o.Name = Name
+	o.Params = Params
+	o.Body = Body
+
+	return o
+end
+
+function Function:Accept(Visitor)
+	return Visitor:visitFunctionStmt(self)
+end
+
+local If = Stmt:new()
+function If:new(Condition, ThenBranch, ElseBranch)
+	local o = Stmt.new(self)
+
+	o.Condition = Condition
+	o.ThenBranch = ThenBranch
+	o.ElseBranch = ElseBranch
+
+	return o
+end
+
+function If:Accept(Visitor)
+	return Visitor:visitIfStmt(self)
+end
+
+local Print = Stmt:new()
+function Print:new(Expr)
+	local o = Stmt.new(self)
+
+	o.Expression = Expr
+
+	return o
+end
+
+function Print:Accept(Visitor)
+	return Visitor:visitPrintStmt(self)
+end
+
+local Return = Stmt:new()
+function Return:new(Keyword, Value)
+	local o = Stmt.new(self)
+
+	o.Keyword = Keyword
+	o.Value = Value
+
+	return o
+end
+
+function Return:Accept(Visitor)
+	return Visitor:visitReturnStmt(self)
+end
+
+local Var = Stmt:new()
+function Var:new(Name, Initializer)
+	local o = Stmt.new(self)
+	
+	o.Name = Name
+	o.Initializer = Initializer
+
+	return o
+end
+
+function Var:Accept(Visitor)
+	return Visitor:visitVarStmt(self)
+end
+
+local While = Stmt:new()
+function While:new(Condition, Body)
+	local o = Stmt.new(self)
+
+	o.Condition = Condition
+	o.Body = Body
+
+	return o
+end
+
+function While:Accept(Visitor)
+	return Visitor:visitWhileStmt(self)
+end
+
+local Visitor = {}
+
+function Visitor:new()
+	local o = {}
+
+	setmetatable(o, self)
+	self.__index = self
+
+	return o
+end
+
+function Visitor:visitBlockStmt(stmt)
+end
+
+function Visitor:visitClassStmt(stmt)
+end
+
+function Visitor:visitExpressionStmt(stmt)
+end
+
+function Visitor:visitFunctionStmt(stmt)
+end
+
+function Visitor:visitIfStmt(stmt)
+end
+
+function Visitor:visitPrintStmt(stmt)
+end
+
+function Visitor:visitReturnStmt(stmt)
+end
+
+function Visitor:visitVarStmt(stmt)
+end
+
+function Visitor:visitWhileStmt(stmt)
+end
+
+StmtModule.Visitor = Visitor
+StmtModule.Block = Block
+StmtModule.Class = Class
+StmtModule.Expression = Expression
+StmtModule.Function = Function
+StmtModule.If = If
+StmtModule.Print = Print
+StmtModule.Return = Return
+StmtModule.Var = Var
+StmtModule.While = While
+
+return StmtModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBX193B354E83D94E9698CA0DB794C5D524">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<Content name="LinkedSource"><null></null></Content>
+							<string name="Name">Environment</string>
+							<string name="ScriptGuid">{69392114-1C2F-461C-A2BF-593BA15FFA11}</string>
+							<ProtectedString name="Source"><![CDATA[local Error = require(script.Parent.Parent.Error)
+
+local EnvironmentModule = {}
+local Environment = {}
+
+function EnvironmentModule:new(Enclosing)
+	return setmetatable({Values = {}, Enclosing = Enclosing}, {__index = Environment})
+end
+
+function Environment:Get(Name)
+	local Value = self.Values[Name.Lexeme]
+	
+	if Value then
+		return Value
+	end
+	
+	if self.Enclosing ~= nil then return self.Enclosing:Get(Name) end
+	
+	Error.ErrorToken(Name, "Undefined variable '" .. Name.Lexeme .. "'.")
+end
+
+function Environment:Define(Name, Value)
+	self.Values[Name] = Value
+	
+	return
+end
+
+function Environment:Assign(Name, Value)
+	if self.Values[Name.Lexeme] then
+		self.Values[Name.Lexeme] = Value
+		
+		return
+	end
+	
+	if self.Enclosing ~= nil then
+		self.Enclosing:Assign(Name, Value)
+		
+		return
+	end
+
+	Error.ErrorToken(Name, "Undefined variable '" .. Name.Lexeme .. "'.")
+end
+
+function Environment:AssignAt(Distance, Name, Value)
+	self:Ancestor(Distance).Values[Name.Lexeme] = Value
+end
+
+function Environment:Ancestor(Distance)
+	for i = 1, Distance do
+		self = self.Enclosing
+	end
+	
+	return self
+end
+
+function Environment:GetAt(Distance, Name)
+	return self:Ancestor(Distance).Values[Name]
+end
+
+return EnvironmentModule]]></ProtectedString>
+							<int64 name="SourceAssetId">-1</int64>
+							<BinaryString name="Tags"></BinaryString>
+						</Properties>
+					</Item>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="Script" referent="RBXF9EBAE1963DA49168D96106A47E36466">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<bool name="Disabled">true</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">README</string>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{29BC0920-7EEF-478C-8FE0-FE6E80C21ECE}</string>
+				<ProtectedString name="Source"><![CDATA[--[[
+
+-- << READ BEFORE USING -
+
+DO NOT USE THIS IN A PLACE THAT HAS ANY IMPORTANT STUFF
+ONLY USE THIS PLUGIN IN A NEW, EMPTY PLACE AS IT LIKES TO CRASH
+AND FOR SOME REASON, PLUGINS DONT HAVE SCRIPT TIMEOUTS
+
+#####
+DO NOT USE FOR LOOPS UNTIL THEY ARE FIXED, THEY WILL CRASH YOUR STUDIO
+#####
+
+-- >> READ BEFORE USING -
+
+-- << ABOUT -------------
+
+LunarisScript is a lua interpretation of the language "Lox" by Robert Nystrom.
+
+If you wish to publish your features to the main branch, please do either of the following:
+	1. Message me (lili2) on discord
+	2. Join the LunarisSDK discord server (https://discord.gg/NVWW9gjJuF), and upload your .rbxmx file to the #LunarisScript/features-fixes forum channel, following the format
+
+-- >> ABOUT -------------
+
+-- << BUG-FIXING / INFO -
+
+If you want to know more about how this interpreter works, or how you could go about bug fixing it, I have two resources for you:
+	1. https://craftinginterpreters.com/a-tree-walk-interpreter.html
+		- A step by step guide (that I followed to make this) explaining how to make a tree-walk interpeter.
+		- All the stuff in this code and in the tutorial should share the same file names and variable names.
+
+	2. https://github.com/munificent/craftinginterpreters/tree/01e6f5b8f3e5dfa65674c2f9cf4700d73ab41cf8/java/com/craftinginterpreters/lox
+		- Contains the complete code for the interpeter this is based on.
+		- Useful for bug fixing, so you can cross reference.
+		- All the file names should be the same.
+
+If you have discovered a bug and fixed a bug, post your .rbxmx file in the aforementioned channel so the interpreter can be patched.
+
+-- << KNOWN BUGS --------
+
+- For loops blow up you computer
+- While loops inside of blocks do not work
+
+-- >> KNOWN BUGS --------
+
+-- >> BUG-FIXING / INFO -
+
+]]]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+		<Item class="Script" referent="RBX90ABE0427FE94158A5AE106314E977EE">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<bool name="Disabled">true</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">LICENSE</string>
+				<token name="RunContext">0</token>
+				<string name="ScriptGuid">{841124A7-7ED4-4C61-90F0-00ACBD2F19BC}</string>
+				<ProtectedString name="Source"><![CDATA[--[[
+Copyright 2023 LILI/lili2/ProcrastinatenDev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+associated documentation files (the “Software”), to deal in the Software without restriction, 
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
+OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+]]]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+	</Item>
+</roblox>
