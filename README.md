@@ -10,6 +10,13 @@ AND FOR SOME REASON, PLUGINS DONT HAVE SCRIPT TIMEOUTS
 
 DO NOT USE FOR LOOPS UNTIL THEY ARE FIXED, THEY WILL CRASH YOUR STUDIO
 
+# INSTALLATION
+
+1. Download the .rbxmx file
+2. Make a **new** roblox place, and drag the .rbxmx into the window
+3. Right click on the folder, and select `Save as Local Plugin...`
+4. The Plugin will now appear in your Plugins tab
+
 # BUG FIXING / INFO
 
 If you want to know more about how this interpreter works, or how you could go about bug fixing it, I have two resources for you:
